@@ -46,6 +46,27 @@ CI runs the same check in [`.github/workflows/uor-index.yml`](../.github/workflo
 
 After analyze, run `gitnexus list` and use the **repo** name shown for that path in MCP tools (`query`, `context`, `impact`, …).
 
+## Web UI on GitHub Pages
+
+This repository can publish the static `gitnexus-web` app to GitHub Pages at:
+
+- `https://humuhumu33.github.io/uor-graph/`
+
+The Pages build runs from [`.github/workflows/deploy-pages.yml`](../.github/workflows/deploy-pages.yml) and deploys `gitnexus-web/dist`.
+
+### What works without a server
+
+- Browser-only graph exploration flows that run fully in the client.
+- Loading repository content directly in the browser (for smaller datasets).
+
+### What still requires backend mode
+
+- Auto-detecting and connecting to `gitnexus serve`.
+- Server-side repo listing and API-backed analysis routes.
+- Large-repo workflows where browser memory limits are too restrictive.
+
+For full local-backend capabilities, run `gitnexus serve` and open the same UI.
+
 ## Two-layer model (UOR + graph)
 
 - **Meaning (ontology):** IRIs, `public/*` exports, and `spec/` live **inside** the submodule at the pinned commit. Cite that tree + SHA for vocabulary / SHACL / JSON-LD answers.

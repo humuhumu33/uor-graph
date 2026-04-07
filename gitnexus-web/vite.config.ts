@@ -7,7 +7,9 @@ import { createRequire } from 'module';
 const _require = createRequire(import.meta.url);
 const gitnexusPkg = _require('../gitnexus/package.json');
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // GitHub Pages serves this repo from /uor-graph/, while local dev stays at /.
+  base: command === 'build' ? '/uor-graph/' : '/',
   plugins: [react(), tailwindcss()],
   define: {
     __REQUIRED_NODE_VERSION__: JSON.stringify(gitnexusPkg.engines.node.replace(/[>=^~\s]/g, '')),
@@ -31,4 +33,4 @@ export default defineConfig({
       allow: ['..'],
     },
   },
-});
+}));
