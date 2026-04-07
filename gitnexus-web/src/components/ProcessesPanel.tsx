@@ -21,12 +21,18 @@ import {
 import { useAppState } from '../hooks/useAppState';
 import { ProcessFlowModal } from './ProcessFlowModal';
 import type { ProcessData, ProcessStep } from '../lib/mermaid-generator';
+import {
+  buildCombinedAllProcessesData,
+  buildProcessDataFromGraph,
+  stepIdsForProcess,
+} from '../lib/process-graph-static';
 
 /** Validate that an ID contains only expected node identifier characters (no Cypher metacharacters or spaces) */
 const isSafeId = (id: string): boolean => /^[a-zA-Z0-9_:.\-/@]+$/.test(id);
 
 export const ProcessesPanel = () => {
-  const { graph, runQuery, setHighlightedNodeIds, highlightedNodeIds } = useAppState();
+  const { graph, runQuery, setHighlightedNodeIds, highlightedNodeIds, hostedGraphMode } =
+    useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProcess, setSelectedProcess] = useState<ProcessData | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
@@ -101,6 +107,16 @@ export const ProcessesPanel = () => {
 
       if (allProcessIds.length === 0) return;
 
+      if (hostedGraphMode && graph) {
+        const combined = buildCombinedAllProcessesData(
+          graph,
+          allProcessIds,
+          `All Processes (${allProcessIds.length} combined)`,
+        );
+        setSelectedProcess(combined);
+        return;
+      }
+
       // Collect all steps from all processes
       const allStepsMap = new Map<string, ProcessStep>();
       const allEdges: Array<{ from: string; to: string; type: string }> = [];
@@ -171,7 +187,7 @@ export const ProcessesPanel = () => {
     } finally {
       setLoadingProcess(null);
     }
-  }, [processes, runQuery]);
+  }, [processes, runQuery, hostedGraphMode, graph]);
 
   // Load process steps and open modal
   const handleViewProcess = useCallback(
@@ -180,6 +196,12 @@ export const ProcessesPanel = () => {
       setLoadingProcess(processId);
 
       try {
+        if (hostedGraphMode && graph) {
+          const processData = buildProcessDataFromGraph(graph, processId, label, processType);
+          setSelectedProcess(processData);
+          return;
+        }
+
         // Query for process steps
         const stepsQuery = `
         MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process {id: '${processId.replace(/'/g, "''")}'})
@@ -244,7 +266,7 @@ export const ProcessesPanel = () => {
         setLoadingProcess(null);
       }
     },
-    [runQuery, graph],
+    [runQuery, graph, hostedGraphMode],
   );
 
   // Cache for process steps (so we don't re-query when toggling focus)
@@ -272,12 +294,17 @@ export const ProcessesPanel = () => {
       // Load steps for this process
       setLoadingProcess(processId);
       try {
-        const stepsQuery = `
+        let stepIds: string[];
+        if (hostedGraphMode && graph) {
+          stepIds = stepIdsForProcess(graph, processId);
+        } else {
+          const stepsQuery = `
                 MATCH (s)-[r:CodeRelation {type: 'STEP_IN_PROCESS'}]->(p:Process {id: '${processId.replace(/'/g, "''")}'})
                 RETURN s.id AS id
             `;
-        const stepsResult = await runQuery(stepsQuery);
-        const stepIds = stepsResult.map((row: any) => row.id || row[0]);
+          const stepsResult = await runQuery(stepsQuery);
+          stepIds = stepsResult.map((row: any) => row.id || row[0]);
+        }
 
         // Cache the result
         setProcessStepsCache((prev) => new Map(prev).set(processId, stepIds));
@@ -291,7 +318,7 @@ export const ProcessesPanel = () => {
         setLoadingProcess(null);
       }
     },
-    [focusedProcessId, processStepsCache, runQuery, setHighlightedNodeIds],
+    [focusedProcessId, processStepsCache, runQuery, setHighlightedNodeIds, hostedGraphMode, graph],
   );
 
   // Focus in graph callback - toggles highlight (used by modal)

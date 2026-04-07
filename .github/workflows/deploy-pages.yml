@@ -6,7 +6,14 @@ on:
     paths:
       - 'gitnexus-web/**'
       - 'gitnexus-shared/**'
+      - 'gitnexus/**'
       - '.github/workflows/deploy-pages.yml'
+      - '.github/actions/**'
+      - 'third_party/**'
+      - 'config/uor-upstream.lock.json'
+      - 'scripts/export-hosted-uor-graph.mjs'
+      - 'scripts/uor-prepare.mjs'
+      - 'scripts/verify-uor-lock.mjs'
   workflow_dispatch:
 
 env:
@@ -24,29 +31,33 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          submodules: recursive
+
+      - uses: ./.github/actions/setup-gitnexus
+        with:
+          build: 'true'
+
+      - name: Verify UOR lock matches submodule
+        run: node scripts/verify-uor-lock.mjs
+
+      - name: Copy UOR GitNexus ignore template
+        run: node scripts/uor-prepare.mjs
+
+      - name: GitNexus analyze (UOR-Framework submodule)
+        run: node gitnexus/dist/cli/index.js analyze third_party/UOR-Framework
+
+      - name: Export hosted graph for static Pages
+        run: node scripts/export-hosted-uor-graph.mjs
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            gitnexus-web/package-lock.json
-            gitnexus-shared/package-lock.json
-
-      - name: Build gitnexus-shared
-        working-directory: gitnexus-shared
-        shell: bash
-        run: |
-          for i in 1 2 3; do
-            npm ci && npm run build && exit 0
-            echo "Retry $i/3 failed for gitnexus-shared build; retrying..."
-            sleep $((i * 5))
-          done
-          echo "::error::Failed to build gitnexus-shared after retries"
-          exit 1
+          cache-dependency-path: gitnexus-web/package-lock.json
 
       - name: Build gitnexus-web
         working-directory: gitnexus-web

@@ -43,6 +43,7 @@ export const QueryFAB = () => {
     graph,
     runQuery,
     isDatabaseReady,
+    hostedGraphMode,
   } = useAppState();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -181,6 +182,8 @@ export const QueryFAB = () => {
     setError(null);
     textareaRef.current?.focus();
   };
+
+  if (hostedGraphMode) return null;
 
   if (!isExpanded) {
     return (

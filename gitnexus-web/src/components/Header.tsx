@@ -63,6 +63,8 @@ export const Header = ({
     rightPanelTab,
     setSettingsPanelOpen,
     setHelpDialogBoxOpen,
+    hostedGraphMode,
+    hostedGraphMeta,
   } = useAppState();
   const [searchQuery, setSearchQuery] = useState('');
   const [isRepoDropdownOpen, setIsRepoDropdownOpen] = useState(false);
@@ -167,8 +169,24 @@ export const Header = ({
           <span className="text-[15px] font-semibold tracking-tight">GitNexus</span>
         </div>
 
-        {/* Project badge + repo dropdown */}
-        {projectName && (
+        {/* Project badge + repo dropdown (hidden for GitHub Pages static snapshot) */}
+        {projectName && hostedGraphMode && (
+          <div
+            className="flex max-w-[280px] cursor-default items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-1.5 text-sm text-text-secondary"
+            title={
+              hostedGraphMeta
+                ? `Static graph · ${hostedGraphMeta.nodeCount} nodes · UOR @ ${hostedGraphMeta.resolvedSha.slice(0, 12)}`
+                : 'Hosted static graph'
+            }
+          >
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-node-interface" />
+            <span className="min-w-0 truncate font-medium text-text-primary">{projectName}</span>
+            <span className="shrink-0 rounded bg-elevated px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-text-muted uppercase">
+              static
+            </span>
+          </div>
+        )}
+        {projectName && !hostedGraphMode && (
           <div className="relative" ref={repoDropdownRef}>
             <button
               onClick={() => {

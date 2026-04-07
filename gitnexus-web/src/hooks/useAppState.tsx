@@ -43,6 +43,15 @@ export type ViewMode = 'onboarding' | 'loading' | 'exploring';
 export type RightPanelTab = 'code' | 'chat';
 export type EmbeddingStatus = 'idle' | 'loading' | 'embedding' | 'indexing' | 'ready' | 'error';
 
+/** Pre-baked GitHub Pages graph (see `uor-hosted/manifest.json`). */
+export type HostedGraphMeta = {
+  resolvedSha: string;
+  projectName: string;
+  nodeCount: number;
+  edgeCount: number;
+  repository?: string;
+};
+
 export interface QueryResult {
   rows: Record<string, any>[];
   nodeIds: string[];
@@ -192,6 +201,11 @@ interface AppState {
   clearAICodeReferences: () => void;
   clearCodeReferences: () => void;
   codeReferenceFocus: CodeReferenceFocus | null;
+
+  /** Static snapshot from GitHub Pages (`uor-hosted/`); no live `gitnexus serve`. */
+  hostedGraphMode: boolean;
+  hostedGraphMeta: HostedGraphMeta | null;
+  setHostedGraphSession: (session: { meta: HostedGraphMeta } | null) => void;
 }
 
 const AppStateContext = createContext<AppState | null>(null);
@@ -318,6 +332,19 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
   // Multi-repo switching
   const [serverBaseUrl, setServerBaseUrl] = useState<string | null>(null);
   const [availableRepos, setAvailableRepos] = useState<BackendRepo[]>([]);
+
+  const [hostedGraphMode, setHostedGraphMode] = useState(false);
+  const [hostedGraphMeta, setHostedGraphMeta] = useState<HostedGraphMeta | null>(null);
+
+  const setHostedGraphSession = useCallback((session: { meta: HostedGraphMeta } | null) => {
+    if (!session) {
+      setHostedGraphMode(false);
+      setHostedGraphMeta(null);
+      return;
+    }
+    setHostedGraphMode(true);
+    setHostedGraphMeta(session.meta);
+  }, []);
 
   // Embedding state
   const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingStatus>('idle');
@@ -462,17 +489,25 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const runQuery = useCallback(async (cypher: string): Promise<any[]> => {
+    if (hostedGraphMode) {
+      console.warn('Cypher queries are not available in hosted static graph mode.');
+      return [];
+    }
     return backendRunQuery(cypher, repoRef.current);
-  }, []);
+  }, [hostedGraphMode]);
 
   const isDatabaseReady = useCallback(async (): Promise<boolean> => {
+    if (hostedGraphMode) return false;
     return probeBackend();
-  }, []);
+  }, [hostedGraphMode]);
 
   // Embedding methods — now trigger server-side via /api/embed
   const embedAbortRef = useRef<AbortController | null>(null);
 
   const startEmbeddings = useCallback(async (): Promise<void> => {
+    if (hostedGraphMode) {
+      throw new Error('Semantic search embeddings require a GitNexus backend.');
+    }
     const repo = repoRef.current;
     if (!repo) throw new Error('No repository loaded');
 
@@ -516,7 +551,7 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
       setEmbeddingStatus('error');
       throw error;
     }
-  }, []);
+  }, [hostedGraphMode]);
 
   const startEmbeddingsWithFallback = useCallback(() => {
     const isPlaywright =
@@ -534,12 +569,17 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
     });
   }, [startEmbeddings]);
 
-  const semanticSearch = useCallback(async (query: string, k: number = 10): Promise<any[]> => {
-    return backendSearch(query, { limit: k, mode: 'semantic', repo: repoRef.current });
-  }, []);
+  const semanticSearch = useCallback(
+    async (query: string, k: number = 10): Promise<any[]> => {
+      if (hostedGraphMode) return [];
+      return backendSearch(query, { limit: k, mode: 'semantic', repo: repoRef.current });
+    },
+    [hostedGraphMode],
+  );
 
   const semanticSearchWithContext = useCallback(
     async (query: string, k: number = 5, _hops: number = 2): Promise<any[]> => {
+      if (hostedGraphMode) return [];
       return backendSearch(query, {
         limit: k,
         mode: 'semantic',
@@ -547,7 +587,7 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
         repo: repoRef.current,
       });
     },
-    [],
+    [hostedGraphMode],
   );
 
   // LLM methods
@@ -568,6 +608,11 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
 
   const initializeAgent = useCallback(
     async (overrideProjectName?: string): Promise<void> => {
+      if (hostedGraphMode) {
+        setAgentError('Chat requires a GitNexus backend (connect with gitnexus serve).');
+        setIsAgentReady(false);
+        return;
+      }
       const config = getActiveProviderConfig();
       if (!config) {
         setAgentError('Please configure an LLM provider in settings');
@@ -610,11 +655,15 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
         setIsAgentInitializing(false);
       }
     },
-    [projectName],
+    [projectName, hostedGraphMode],
   );
 
   const sendChatMessage = useCallback(
     async (message: string): Promise<void> => {
+      if (hostedGraphMode) {
+        setAgentError('Chat is not available in hosted static graph mode.');
+        return;
+      }
       // Refresh Code panel for the new question: keep user-pinned refs, clear old AI citations
       clearAICodeReferences();
       // Also clear previous tool-driven AI highlights (highlight_in_graph)
@@ -999,6 +1048,7 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
       clearAIToolHighlights,
       graph,
       embeddingStatus,
+      hostedGraphMode,
     ],
   );
 
@@ -1230,6 +1280,9 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
     setAvailableRepos,
     switchRepo,
     setCurrentRepo,
+    hostedGraphMode,
+    hostedGraphMeta,
+    setHostedGraphSession,
     runQuery,
     isDatabaseReady,
     // Embedding state and methods

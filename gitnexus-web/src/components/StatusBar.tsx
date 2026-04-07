@@ -3,7 +3,7 @@ import { Heart } from '@/lib/lucide-icons';
 import { useAppState } from '../hooks/useAppState';
 
 export const StatusBar = () => {
-  const { graph, progress } = useAppState();
+  const { graph, progress, hostedGraphMode, hostedGraphMeta } = useAppState();
 
   const nodeCount = graph?.nodes.length ?? 0;
   const edgeCount = graph?.relationships.length ?? 0;
@@ -40,9 +40,16 @@ export const StatusBar = () => {
             <span>{progress.message}</span>
           </>
         ) : (
-          <div className="flex items-center gap-1.5" data-testid="status-ready">
-            <span className="h-1.5 w-1.5 rounded-full bg-node-function" />
-            <span>Ready</span>
+          <div className="flex flex-wrap items-center gap-2" data-testid="status-ready">
+            <div className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-node-function" />
+              <span>Ready</span>
+            </div>
+            {hostedGraphMode && hostedGraphMeta && (
+              <span className="rounded border border-border-subtle bg-elevated/80 px-2 py-0.5 font-mono text-[10px] text-text-muted">
+                Hosted UOR · {hostedGraphMeta.resolvedSha.slice(0, 7)}
+              </span>
+            )}
           </div>
         )}
       </div>

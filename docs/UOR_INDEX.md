@@ -48,24 +48,32 @@ After analyze, run `gitnexus list` and use the **repo** name shown for that path
 
 ## Web UI on GitHub Pages
 
-This repository can publish the static `gitnexus-web` app to GitHub Pages at:
+This repository publishes the static `gitnexus-web` app to GitHub Pages at:
 
 - `https://humuhumu33.github.io/uor-graph/`
 
-The Pages build runs from [`.github/workflows/deploy-pages.yml`](../.github/workflows/deploy-pages.yml) and deploys `gitnexus-web/dist`.
+The workflow [`.github/workflows/deploy-pages.yml`](../.github/workflows/deploy-pages.yml) checks out the UOR submodule, verifies `config/uor-upstream.lock.json`, runs `gitnexus analyze` on `third_party/UOR-Framework`, exports `gitnexus-web/public/uor-hosted/manifest.json` plus chunk JSON via [`scripts/export-hosted-uor-graph.mjs`](../scripts/export-hosted-uor-graph.mjs), then builds and deploys `gitnexus-web/dist`.
 
-### What works without a server
+### Hosted UOR graph (default on Pages)
 
-- Browser-only graph exploration flows that run fully in the client.
-- Loading repository content directly in the browser (for smaller datasets).
+On the live site, the app loads a **pre-built** `{ nodes, relationships }` snapshot from `uor-hosted/manifest.json` and `uor-hosted/chunks/*.json` (same shapes as a successful `connectToServer` graph). You get read-only exploration: pan/zoom, selection, file tree, in-memory process flows, and header search over node names. **No** `gitnexus serve`, upload, or CLI is required for visitors.
+
+The manifest includes `resolved_sha` (from the lock file) so the UI can show which UOR commit the graph represents.
+
+- Add `?hosted=0` to the URL to skip the static snapshot and use the normal onboarding / `?server=` bridge flow (for debugging).
 
 ### What still requires backend mode
 
-- Auto-detecting and connecting to `gitnexus serve`.
-- Server-side repo listing and API-backed analysis routes.
-- Large-repo workflows where browser memory limits are too restrictive.
+- Live Cypher, repo listing, re-analyze, server embeddings, and AI chat tools that call HTTP APIs.
+- Workflows that exceed what fits in a single static export (very large graphs may need chunking or follow-up lazy loading).
 
-For full local-backend capabilities, run `gitnexus serve` and open the same UI.
+**Local preview of hosted assets:** from the repo root after `cd gitnexus && npm run build`, run `npm run uor:prepare`, `npm run uor:analyze:local`, then `npm run uor:export-hosted`; `cd gitnexus-web && npm run build && npm run preview` and open the preview URL (with the same `base` as production, graph loads from `public/uor-hosted/`).
+
+### Refresh policy
+
+The published graph updates when `main` runs the Pages workflow—typically after changes under the workflow’s `paths` filters (including `third_party/**`, `config/uor-upstream.lock.json`, `gitnexus/**`, `gitnexus-web/**`, and export scripts). Bumping the UOR submodule or lock without rebuilding Pages would not change the live site until a deploy runs.
+
+For full local-backend capabilities, run `gitnexus serve` and open the UI with `?server=` or the bridge flow.
 
 ## Two-layer model (UOR + graph)
 

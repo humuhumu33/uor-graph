@@ -21,6 +21,7 @@ import {
   type BackendRepo,
 } from './services/backend-client';
 import { ERROR_RESET_DELAY_MS } from './config/ui-constants';
+import { tryLoadHostedUorGraph } from './bootstrap/hostedUorGraph';
 
 const AppContent = () => {
   const {
@@ -45,6 +46,7 @@ const AppContent = () => {
     setAvailableRepos,
     switchRepo,
     setCurrentRepo,
+    setHostedGraphSession,
   } = useAppState();
 
   const graphCanvasRef = useRef<GraphCanvasHandle>(null);
@@ -98,6 +100,72 @@ const AppContent = () => {
       startEmbeddingsWithFallback,
     ],
   );
+
+  // Hosted static graph (GitHub Pages): load manifest + chunks before onboarding.
+  const hostedBootstrapRan = useRef(false);
+  useEffect(() => {
+    if (hostedBootstrapRan.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('hosted') === '0') return;
+    if (params.has('server')) return;
+
+    hostedBootstrapRan.current = true;
+
+    setProgress({
+      phase: 'extracting',
+      percent: 0,
+      message: 'Loading hosted graph...',
+      detail: 'Fetching manifest',
+    });
+    setViewMode('loading');
+
+    void tryLoadHostedUorGraph()
+      .then(async (payload) => {
+        if (!payload) {
+          setProgress(null);
+          setViewMode('onboarding');
+          return;
+        }
+
+        const { manifest, nodes, relationships } = payload;
+        setProjectName(manifest.projectName);
+        setCurrentRepo(manifest.projectName);
+        setHostedGraphSession({
+          meta: {
+            resolvedSha: manifest.resolvedSha,
+            projectName: manifest.projectName,
+            nodeCount: manifest.nodeCount,
+            edgeCount: manifest.edgeCount,
+            repository: manifest.repository,
+          },
+        });
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('project', manifest.projectName);
+        window.history.replaceState(null, '', url.toString());
+
+        const graph = createKnowledgeGraph();
+        for (const node of nodes) graph.addNode(node);
+        for (const rel of relationships) graph.addRelationship(rel);
+        setGraph(graph);
+
+        setViewMode('exploring');
+        setProgress(null);
+      })
+      .catch((err) => {
+        console.error('Hosted graph load failed:', err);
+        setProgress(null);
+        setViewMode('onboarding');
+        setHostedGraphSession(null);
+      });
+  }, [
+    setCurrentRepo,
+    setGraph,
+    setHostedGraphSession,
+    setProgress,
+    setProjectName,
+    setViewMode,
+  ]);
 
   // Auto-connect when ?server query param is present (bookmarkable shortcut).
   // Also reads ?project= to connect to a specific repo.
@@ -195,7 +263,7 @@ const AppContent = () => {
   // On disconnect: show a reconnecting banner instead of resetting to onboarding.
   // The heartbeat retries indefinitely with capped backoff and recovers automatically.
   useEffect(() => {
-    if (viewMode !== 'exploring') return;
+    if (viewMode !== 'exploring' || !serverBaseUrl) return;
 
     const cleanup = connectHeartbeat(
       () => setServerDisconnected(false),
@@ -203,7 +271,7 @@ const AppContent = () => {
     );
 
     return cleanup;
-  }, [viewMode]);
+  }, [viewMode, serverBaseUrl]);
 
   // Render based on view mode
   if (viewMode === 'onboarding') {

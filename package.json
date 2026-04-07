@@ -9,6 +9,7 @@
     "uor:verify-cargo": "node scripts/uor-cargo-verify.mjs",
     "uor:analyze": "npx gitnexus analyze third_party/UOR-Framework",
     "uor:analyze:local": "node gitnexus/dist/cli/index.js analyze third_party/UOR-Framework",
+    "uor:export-hosted": "node scripts/export-hosted-uor-graph.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",

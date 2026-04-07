@@ -8,13 +8,20 @@ import { WebGPUFallbackDialog } from './WebGPUFallbackDialog';
  * Shows in header when graph is loaded
  */
 export const EmbeddingStatus = () => {
-  const { embeddingStatus, embeddingProgress, startEmbeddings, graph, viewMode, serverBaseUrl } =
-    useAppState();
+  const {
+    embeddingStatus,
+    embeddingProgress,
+    startEmbeddings,
+    graph,
+    viewMode,
+    serverBaseUrl,
+    hostedGraphMode,
+  } = useAppState();
 
   const [showFallbackDialog, setShowFallbackDialog] = useState(false);
 
-  // Only show when exploring a loaded graph; hide in backend mode (no WASM DB)
-  if (viewMode !== 'exploring' || !graph || serverBaseUrl) return null;
+  // Only show when exploring a loaded graph; hide in backend mode (no WASM DB) and hosted static snapshot
+  if (viewMode !== 'exploring' || !graph || serverBaseUrl || hostedGraphMode) return null;
 
   const nodeCount = graph.nodes.length;
 
