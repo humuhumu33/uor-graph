@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - uses: ./.github/actions/setup-gitnexus
         with:
           build: 'true'
@@ -33,7 +33,15 @@ jobs:
 
       # gitnexus-shared already built by setup-gitnexus action above
       - name: Install gitnexus-web dependencies
-        run: npm ci
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            npm ci && exit 0
+            echo "Retry $i/3 failed for gitnexus-web npm ci; retrying..."
+            sleep $((i * 5))
+          done
+          echo "::error::Failed to install gitnexus-web dependencies after retries"
+          exit 1
         working-directory: gitnexus-web
 
       - name: Run gitnexus-web unit tests
@@ -66,7 +74,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - uses: ./.github/actions/setup-gitnexus
         with:
           build: 'true'
