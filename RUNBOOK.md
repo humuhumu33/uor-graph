@@ -16,6 +16,8 @@ npm run build
 
 Use `npx gitnexus …` from any path after global/published install, or `node dist/cli/index.js …` when developing from `gitnexus/` with a local build.
 
+**UOR submodule + MCP:** see [docs/UOR_INDEX.md](docs/UOR_INDEX.md). **End-to-end validation (CLI, MCP, web, bridge):** [docs/GITNEXUS_VALIDATION.md](docs/GITNEXUS_VALIDATION.md).
+
 ---
 
 ## Index out of date / “stale” tools
