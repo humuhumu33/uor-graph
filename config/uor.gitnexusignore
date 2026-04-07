@@ -1,13 +1,14 @@
-# Applied to UOR-Framework checkout before GitNexus analyze (copied by uor:prepare).
-# Upstream UOR-Framework repo stays unchanged — this file is our product scope only.
+# Full UOR-Framework workspace for GitNexus (ontology + clients + codegen + conformance +
+# foundation + docs generator + website + macros). Aligns visual analysis with the whole repo.
 #
-# Goal: index ontology + published artifacts + static site sources (aligned with
-# https://uor-foundation.github.io/UOR-Framework/ and https://github.com/UOR-Foundation/UOR-Framework),
-# not the full Rust workspace (clients, codegen, conformance, generated foundation, macros, docs generator).
+# Upstream `.gitignore` hides `/public/` (uor-build output). Re-include it so generated JSON-LD
+# and siblings are indexed when present after `npm run uor:build-ontology`.
+!/public/
+!/public/**
 
-clients/
-codegen/
-conformance/
-foundation/
-uor-foundation-macros/
-docs/
+# Not UOR-authored source
+/external/
+
+# Rust build artifacts only
+target/
+**/target/

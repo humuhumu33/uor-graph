@@ -7,8 +7,8 @@
  * Ontology IRIs in `ontology-terms.json` come from `uor-build` output (`public/uor.foundation.jsonld`),
  * not regex on Rust sources. Set `UOR_SKIP_ONTOLOGY_BUILD=1` only if jsonld is already materialized.
  *
- * Belt-and-suspenders: after buildWebGraph(), keep only nodes tied to spec/, public/, or website/
- * (same policy as config/uor.gitnexusignore) so the shipped bundle stays aligned if ignore drifts.
+ * The exported **code graph** is the full GitNexus web graph for the indexed UOR checkout (no path
+ * subset filter): re-run `uor:prepare` + `uor:analyze:local` after changing `config/uor.gitnexusignore`.
  */
 import fs from 'fs/promises';
 import path from 'path';
@@ -27,47 +27,6 @@ const lockPath = path.join(root, 'config', 'uor-upstream.lock.json');
 const lbugPath = path.join(root, 'third_party', 'UOR-Framework', '.gitnexus', 'lbug');
 const outDir = path.join(root, 'gitnexus-web', 'public', 'uor-hosted');
 const chunksDir = path.join(outDir, 'chunks');
-
-/** Must match the "keep" trees documented in config/uor.gitnexusignore (blocklist is the inverse). */
-const HOSTED_GRAPH_PATH_PREFIXES = ['spec/', 'public/', 'website/'];
-
-function normalizeRepoRelativePath(fp) {
-  if (fp == null || fp === '') return '';
-  return String(fp).replace(/\\/g, '/').replace(/^\.\//, '');
-}
-
-/**
- * @param {{ id: string; label: string; properties: Record<string, unknown> }} node
- */
-function nodeAllowedForHostedExport(node) {
-  const fp = normalizeRepoRelativePath(/** @type {string|undefined} */ (node.properties?.filePath));
-  if (!fp) {
-    // Community, Process, etc. — no single file path
-    return true;
-  }
-  return HOSTED_GRAPH_PATH_PREFIXES.some((pre) => fp.startsWith(pre));
-}
-
-/**
- * Edges-first: keep relationships whose **endpoints** both satisfy the hosted path scope, then
- * keep all nodes that pass the same scope (including isolates). Equivalent set to nodes-then-edges;
- * order matches ontology “relationship substrate → entities” for maintainability.
- *
- * @param {{ nodes: unknown[]; relationships: unknown[] }} graph
- */
-function filterGraphForHostedExport(graph) {
-  const nodesRaw = graph.nodes;
-  const byId = new Map(nodesRaw.map((n) => [/** @type {any} */ (n).id, n]));
-  const relationships = graph.relationships.filter((r) => {
-    const rel = /** @type {{ sourceId: string; targetId: string }} */ (r);
-    const s = byId.get(rel.sourceId);
-    const t = byId.get(rel.targetId);
-    if (!s || !t) return false;
-    return nodeAllowedForHostedExport(s) && nodeAllowedForHostedExport(t);
-  });
-  const nodes = nodesRaw.filter((n) => nodeAllowedForHostedExport(/** @type {any} */ (n)));
-  return { nodes, relationships };
-}
 
 const uorRoot = path.join(root, 'third_party', 'UOR-Framework');
 
@@ -156,7 +115,7 @@ async function main() {
   );
 
   const raw = await withLbugDb(lbugPath, () => buildWebGraph(false));
-  const graph = filterGraphForHostedExport(raw);
+  const graph = raw;
 
   const ontologyInventoryFull = await readOntologyInventoryFromCounts();
   const { propertiesTotal, ...ontologyInventory } = ontologyInventoryFull;
@@ -190,7 +149,7 @@ async function main() {
     nodeCount: graph.nodes.length,
     edgeCount: graph.relationships.length,
     chunks: [{ id: chunkId, path: chunkRelPath }],
-    hostedScope: 'spec,public,website',
+    hostedScope: 'full-workspace',
     ontologyInventory,
   };
 
@@ -200,14 +159,6 @@ async function main() {
   console.log(
     `Wrote ${outDir}/manifest.json + ${chunkRelPath} (${graph.nodes.length} nodes, ${graph.relationships.length} edges, ${(stat.size / 1024 / 1024).toFixed(2)} MiB)`,
   );
-  if (
-    raw.nodes.length !== graph.nodes.length ||
-    raw.relationships.length !== graph.relationships.length
-  ) {
-    console.log(
-      `  (Filtered from ${raw.nodes.length} nodes, ${raw.relationships.length} edges for hosted path scope)`,
-    );
-  }
   console.log(
     `  Ontology terms: ${ontologyTerms.classIris.length} classes, ${ontologyTerms.propertyIris.length} properties, ${ontologyTerms.individualIris.length} individuals, ${ontologyTerms.namespaceModuleKeys.length} namespace modules`,
   );

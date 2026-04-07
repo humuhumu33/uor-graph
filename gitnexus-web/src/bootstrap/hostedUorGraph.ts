@@ -16,7 +16,7 @@ export type HostedManifest = {
   nodeCount: number;
   edgeCount: number;
   chunks: { id: string; path: string }[];
-  /** When set, graph was post-filtered to these repo-relative trees (e.g. `spec,public,website`). */
+  /** When set, describes export scope (e.g. `full-workspace` for the full indexed UOR tree). */
   hostedScope?: string;
   /** Authoritative ontology inventory from upstream `spec/src/counts.rs` at export time. */
   ontologyInventory?: UorOntologyInventory;

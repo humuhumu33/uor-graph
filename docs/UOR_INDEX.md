@@ -24,13 +24,11 @@ npm run uor:prepare    # copies config/uor.gitnexusignore → submodule (upstrea
 npm run uor:analyze    # npx gitnexus analyze third_party/UOR-Framework
 ```
 
-### Indexing scope (hosted graph / public site alignment)
+### Indexing scope (full UOR workspace on Pages)
 
-[`config/uor.gitnexusignore`](../config/uor.gitnexusignore) is a **blocklist**: GitNexus still walks `third_party/UOR-Framework`, but **skips** workspace trees that are not the ontology + published artifacts + static site story (e.g. `clients/`, `codegen/`, `conformance/`, `foundation/`, `uor-foundation-macros/`, `docs/`). **`website/` is indexed** (static site sources), alongside **`spec/`** (ontology) and **`public/`** (JSON-LD, Turtle, SHACL, etc.).
+[`config/uor.gitnexusignore`](../config/uor.gitnexusignore) is merged with upstream `.gitignore` during analyze. It **indexes the whole UOR-Framework tree**—`spec/`, `clients/`, `codegen/`, `conformance/`, `foundation/`, `docs/`, `website/`, `uor-foundation-macros/`, root manifests, etc.—so the hosted graph matches the [UOR-Framework repo](https://github.com/UOR-Foundation/UOR-Framework) for visual inspection. Only **`target/`**, **`external/`**, and (by default) gitignored paths are excluded; **`!/public/`** re-includes `public/` after **`uor-build`** so generated ontology artifacts are in the index.
 
-That keeps the GitHub Pages graph closer to [uor-foundation.github.io/UOR-Framework](https://uor-foundation.github.io/UOR-Framework/) than to the full Rust workspace. Root files (e.g. top-level `Cargo.toml`) may still be indexed unless added to the ignore file.
-
-The export script [`scripts/export-hosted-uor-graph.mjs`](../scripts/export-hosted-uor-graph.mjs) applies a second **path-prefix filter** (`spec/`, `public/`, `website/`) so the shipped `uor-hosted/*.json` cannot drift if ignore rules change. The manifest may include `hostedScope` (e.g. `spec,public,website`) for debugging.
+The export script [`scripts/export-hosted-uor-graph.mjs`](../scripts/export-hosted-uor-graph.mjs) ships the **full** GitNexus web graph (no extra path filter). `manifest.hostedScope` is **`full-workspace`**. The bundle is larger than the old subset; if GitHub Pages or browser limits become an issue, revisit chunking or a narrowed ignore file.
 
 ### Canonical ontology IRIs (`ontology-terms.json`)
 
@@ -113,7 +111,7 @@ Use this **order** for docs, onboarding, and agent exploration (we do not fork G
 
 For MCP: prefer `query` / `impact` / process resources for **relationship context** before dumping raw symbol lists; ground answers with **submodule SHA + file path**.
 
-**Hosted web graph (Sigma):** UOR perspective filters apply in **substrate order** — classify which **edges** belong to the ontology frame (both endpoints match the active perspective), then apply UOR + depth/label rules on **nodes**, then hide **edges** if the substrate failed or either endpoint is hidden. The export script filters **relationships** by path scope first (via endpoint lookup), then the same node filter as before.
+**Hosted web graph (Sigma):** UOR perspective filters apply in **substrate order** — classify which **edges** belong to the ontology frame (both endpoints match the active perspective), then apply UOR + depth/label rules on **nodes**, then hide **edges** if the substrate failed or either endpoint is hidden.
 
 ## Knowledge graph ↔ website ↔ GitHub (hosted UI)
 
