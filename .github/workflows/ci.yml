@@ -9,6 +9,9 @@ on:
     paths-ignore: ['**.md', 'docs/**', 'LICENSE']
   workflow_call:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
