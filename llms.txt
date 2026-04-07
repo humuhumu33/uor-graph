@@ -1,4 +1,8 @@
-GitNexus monorepo (CLI + web UI)
+GitNexus monorepo (CLI + web UI) — UOR distribution
+
+# UOR-Framework index (pinned submodule + GitNexus)
+- docs/UOR_INDEX.md — clone, `uor:prepare`, `uor:analyze`, MCP repo name, two-layer model (ontology vs code graph), edges-before-nodes order
+- Submodule remote is enforced to https://github.com/UOR-Foundation/UOR-Framework; see `config/uor-upstream.lock.json` and `npm run uor:verify-lock`
 
 # Core docs (read first for any contribution)
 - AGENTS.md — canonical agent instructions, GitNexus MCP tool reference

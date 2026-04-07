@@ -1,0 +1,4 @@
+# Applied to UOR-Framework checkout before GitNexus analyze (copied by uor:prepare).
+# Keeps ontology/code focus; reduces noise. Upstream UOR-Framework repo stays unchanged.
+
+website/

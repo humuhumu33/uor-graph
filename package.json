@@ -3,6 +3,10 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
+    "uor:prepare": "node scripts/uor-prepare.mjs",
+    "uor:sync-lock": "node scripts/sync-uor-lock.mjs",
+    "uor:verify-lock": "node scripts/verify-uor-lock.mjs",
+    "uor:analyze": "npx gitnexus analyze third_party/UOR-Framework",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",

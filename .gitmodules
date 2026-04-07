@@ -1,0 +1,3 @@
+[submodule "third_party/UOR-Framework"]
+	path = third_party/UOR-Framework
+	url = https://github.com/UOR-Foundation/UOR-Framework.git

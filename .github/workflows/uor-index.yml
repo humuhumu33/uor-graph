@@ -1,0 +1,56 @@
+name: UOR index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'third_party/**'
+      - '.gitmodules'
+      - 'config/uor.gitnexusignore'
+      - 'config/uor-upstream.lock.json'
+      - 'scripts/uor-prepare.mjs'
+      - 'scripts/sync-uor-lock.mjs'
+      - 'scripts/verify-uor-lock.mjs'
+      - '.github/workflows/uor-index.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'third_party/**'
+      - '.gitmodules'
+      - 'config/uor.gitnexusignore'
+      - 'config/uor-upstream.lock.json'
+      - 'scripts/uor-prepare.mjs'
+      - 'scripts/sync-uor-lock.mjs'
+      - 'scripts/verify-uor-lock.mjs'
+      - '.github/workflows/uor-index.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: uor-index-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-and-analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+
+      - name: Verify lock matches submodule and canonical UOR remote
+        run: node scripts/verify-uor-lock.mjs
+
+      - uses: ./.github/actions/setup-gitnexus
+        with:
+          build: 'true'
+
+      - name: Copy UOR GitNexus ignore template
+        run: node scripts/uor-prepare.mjs
+
+      - name: GitNexus analyze (UOR-Framework submodule)
+        run: node gitnexus/dist/cli/index.js analyze third_party/UOR-Framework

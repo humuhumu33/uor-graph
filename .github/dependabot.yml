@@ -1,0 +1,10 @@
+# Optional: weekly submodule bump PRs for third_party/UOR-Framework (run uor:sync-lock on merge).
+version: 2
+updates:
+  - package-ecosystem: gitsubmodule
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - uor-framework

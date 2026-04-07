@@ -38,6 +38,8 @@ https://github.com/user-attachments/assets/172685ba-8e54-4ea7-9ad1-e31a3398da72
 
 **TL;DR:** The **Web UI** is a quick way to chat with any repo. The **CLI + MCP** is how you make your AI agent actually reliable — it gives Cursor, Claude Code, Codex, and friends a deep architectural view of your codebase so they stop missing dependencies, breaking call chains, and shipping blind edits. Even smaller models get full architectural clarity, making it compete with goliath models.
 
+**UOR Foundation distribution:** This fork wires GitNexus to the canonical **[UOR-Framework](https://github.com/UOR-Foundation/UOR-Framework)** tree via a git submodule at `third_party/UOR-Framework` (remote and lock are verified in CI). See **[docs/UOR_INDEX.md](docs/UOR_INDEX.md)** for clone, analyze, and MCP usage.
+
 ---
 
 ## Star History
