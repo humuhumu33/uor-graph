@@ -13,6 +13,8 @@ on:
       - 'config/uor-upstream.lock.json'
       - 'config/uor.gitnexusignore'
       - 'scripts/export-hosted-uor-graph.mjs'
+      - 'scripts/uor-build-ontology.mjs'
+      - 'scripts/uor-jsonld-ontology-terms.mjs'
       - 'scripts/uor-prepare.mjs'
       - 'scripts/verify-uor-lock.mjs'
   workflow_dispatch:
@@ -50,6 +52,17 @@ jobs:
 
       - name: GitNexus analyze (UOR-Framework submodule)
         run: node gitnexus/dist/cli/index.js analyze third_party/UOR-Framework
+
+      - name: Install Rust (UOR workspace — uor-build for canonical ontology-terms.json)
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Cache UOR cargo artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: third_party/UOR-Framework
+          prefix-key: uor-framework-v1
 
       - name: Export hosted graph for static Pages
         run: node scripts/export-hosted-uor-graph.mjs

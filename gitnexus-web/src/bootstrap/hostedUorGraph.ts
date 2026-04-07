@@ -2,6 +2,7 @@
  * Load pre-exported GitNexus graph from static assets (GitHub Pages hosted mode).
  * Manifest: `${BASE_URL}uor-hosted/manifest.json`
  * Optional `ontology-terms.json` supplies IRIs for class/property/individual perspectives (see `uor-ontology-types`).
+ * (Future: optional second layer of OWL axiom edges from JSON-LD — see docs/UOR_INDEX.md § Future: OWL structure subgraph.)
  */
 import type { GraphNode, GraphRelationship } from 'gitnexus-shared';
 import type { UorOntologyInventory, UorOntologyTermsPayload } from '../lib/uor-ontology-types';

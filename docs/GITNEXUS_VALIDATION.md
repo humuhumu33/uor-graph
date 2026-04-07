@@ -14,6 +14,7 @@ Operational checklist derived from the migration/validation plan. Use this to co
 | Native toolchain (CLI) | python3, make, g++ | Required for Tree-sitter during `npm install` in `gitnexus/`. |
 | UOR lock | `npm run uor:verify-lock` (repo root) | Submodule HEAD must match [`config/uor-upstream.lock.json`](../config/uor-upstream.lock.json). |
 | Rust + Tier 0 compile gate | `npm run uor:verify-cargo` (repo root) | `cargo check --workspace` on `third_party/UOR-Framework`; requires `cargo`. See [`docs/UOR_INDEX.md`](UOR_INDEX.md). |
+| UOR JSON-LD ontology helpers | `npm run test:uor-scripts` (repo root) | Node tests for [`scripts/uor-jsonld-ontology-terms.mjs`](../scripts/uor-jsonld-ontology-terms.mjs); optional sanity check. |
 | Submodule | `git submodule update --init --recursive` | |
 | MCP config | `npx gitnexus setup` or README | [Root README](../README.md) Cursor / Claude blocks. |
 

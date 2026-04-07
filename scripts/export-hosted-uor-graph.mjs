@@ -4,12 +4,21 @@
  *
  * Writes gitnexus-web/public/uor-hosted/manifest.json + chunks/*.json
  *
+ * Ontology IRIs in `ontology-terms.json` come from `uor-build` output (`public/uor.foundation.jsonld`),
+ * not regex on Rust sources. Set `UOR_SKIP_ONTOLOGY_BUILD=1` only if jsonld is already materialized.
+ *
  * Belt-and-suspenders: after buildWebGraph(), keep only nodes tied to spec/, public/, or website/
  * (same policy as config/uor.gitnexusignore) so the shipped bundle stays aligned if ignore drifts.
  */
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+
+import { runUorBuildSync } from './uor-build-ontology.mjs';
+import {
+  assertOntologyTermsMatchCounts,
+  extractOntologyTermsFromJsonLdDocument,
+} from './uor-jsonld-ontology-terms.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -75,70 +84,48 @@ async function readOntologyInventoryFromCounts() {
   return {
     namespaces: take('NAMESPACES'),
     classes: take('CLASSES'),
+    /** Namespace-level property count (matches foundation site hero line). */
     properties: take('NAMESPACE_PROPERTIES'),
+    /** Total OWL properties including global `uor:space` — must match `ontology-terms.json` propertyIris length. */
+    propertiesTotal: take('PROPERTIES'),
     individuals: take('INDIVIDUALS'),
   };
 }
 
-/**
- * IRIs + namespace module keys for hosted perspective filters (regex on spec sources).
- */
-function captureAll(re, content) {
-  const r = new RegExp(re.source, 'g');
-  const out = [];
-  let m;
-  while ((m = r.exec(content)) !== null) out.push(m[1]);
-  return out;
-}
-
-async function collectRsFilesRecursive(dir) {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  const out = [];
-  for (const e of entries) {
-    const p = path.join(dir, e.name);
-    if (e.isDirectory()) {
-      out.push(...(await collectRsFilesRecursive(p)));
-    } else if (e.name.endsWith('.rs')) {
-      out.push(p);
-    }
-  }
-  return out;
-}
-
-async function extractOntologyTerms() {
+async function readNamespaceModuleKeys() {
   const nsDir = path.join(uorRoot, 'spec', 'src', 'namespaces');
   const dirEnt = await fs.readdir(nsDir);
-  const namespaceModuleKeys = dirEnt
+  return dirEnt
     .filter((f) => f.endsWith('.rs') && f !== 'mod.rs')
     .map((f) => f.replace(/\.rs$/, ''))
     .sort();
+}
 
-  const classIris = [];
-  const propertyIris = [];
-  const individualIris = [];
-
-  const reClass = /Class\s*\{\s*id:\s*"([^"]+)"/;
-  const reProp = /Property\s*\{\s*id:\s*"([^"]+)"/;
-  const reInd = /Individual\s*\{\s*id:\s*"([^"]+)"/;
-  const reAnn = /AnnotationProperty\s*\{\s*id:\s*"([^"]+)"/;
-
-  const specSrc = path.join(uorRoot, 'spec', 'src');
-  const allRs = await collectRsFilesRecursive(specSrc);
-  for (const filePath of allRs) {
-    const content = await fs.readFile(filePath, 'utf8');
-    classIris.push(...captureAll(reClass, content));
-    propertyIris.push(...captureAll(reProp, content));
-    propertyIris.push(...captureAll(reAnn, content));
-    individualIris.push(...captureAll(reInd, content));
+async function ensureUorFoundationJsonLd() {
+  const jsonldPath = path.join(uorRoot, 'public', 'uor.foundation.jsonld');
+  let skip = process.env.UOR_SKIP_ONTOLOGY_BUILD === '1';
+  try {
+    await fs.access(jsonldPath);
+  } catch {
+    skip = false;
   }
+  if (skip) {
+    console.log(
+      'Using existing public/uor.foundation.jsonld (UOR_SKIP_ONTOLOGY_BUILD=1). Remove env var to rebuild.',
+    );
+    return;
+  }
+  const code = runUorBuildSync();
+  if (code !== 0) process.exit(code);
+}
 
-  const uniq = (arr) => [...new Set(arr)];
-  return {
-    classIris: uniq(classIris),
-    propertyIris: uniq(propertyIris),
-    individualIris: uniq(individualIris),
-    namespaceModuleKeys,
-  };
+async function extractOntologyTermsFromBuild() {
+  const jsonldPath = path.join(uorRoot, 'public', 'uor.foundation.jsonld');
+  const raw = await fs.readFile(jsonldPath, 'utf8');
+  const doc = JSON.parse(raw);
+  const extracted = extractOntologyTermsFromJsonLdDocument(doc);
+  const namespaceModuleKeys = await readNamespaceModuleKeys();
+  return { ...extracted, namespaceModuleKeys };
 }
 
 async function main() {
@@ -157,6 +144,8 @@ async function main() {
     process.exit(1);
   }
 
+  await ensureUorFoundationJsonLd();
+
   // Load compiled gitnexus (same as CLI); use file URL for Windows ESM resolution
   const distRoot = path.join(root, 'gitnexus', 'dist');
   const { withLbugDb } = await import(
@@ -169,8 +158,15 @@ async function main() {
   const raw = await withLbugDb(lbugPath, () => buildWebGraph(false));
   const graph = filterGraphForHostedExport(raw);
 
-  const ontologyInventory = await readOntologyInventoryFromCounts();
-  const ontologyTerms = await extractOntologyTerms();
+  const ontologyInventoryFull = await readOntologyInventoryFromCounts();
+  const { propertiesTotal, ...ontologyInventory } = ontologyInventoryFull;
+
+  const ontologyTerms = await extractOntologyTermsFromBuild();
+  assertOntologyTermsMatchCounts(ontologyTerms, {
+    classes: ontologyInventoryFull.classes,
+    propertiesTotal: ontologyInventoryFull.propertiesTotal,
+    individuals: ontologyInventoryFull.individuals,
+  });
   await fs.mkdir(outDir, { recursive: true });
   await fs.writeFile(
     path.join(outDir, 'ontology-terms.json'),

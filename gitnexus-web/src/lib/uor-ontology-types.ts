@@ -3,9 +3,12 @@
  * [UOR Foundation](https://uor-foundation.github.io/UOR-Framework/) (“Ontology Inventory” line).
  *
  * **Scope:** Inventory counts mirror upstream `third_party/UOR-Framework/spec/src/counts.rs`
- * (`NAMESPACES`, `CLASSES`, `NAMESPACE_PROPERTIES`, `INDIVIDUALS`). The knowledge graph export
- * includes `spec/`, `public/`, and `website/` — ontology **symbols** map from `spec/src/namespaces/*.rs`;
- * `website/` nodes are **documentation site sources** (pages) alongside code graph entities.
+ * (`NAMESPACES`, `CLASSES`, `NAMESPACE_PROPERTIES`, `INDIVIDUALS`). **`ontology-terms.json` IRI lists**
+ * are extracted at export from `uor-build` output (`public/uor.foundation.jsonld`, same graph as
+ * `Ontology::full()`), not from regex on Rust sources — see `scripts/uor-jsonld-ontology-terms.mjs`.
+ * The knowledge graph export includes `spec/`, `public/`, and `website/` — ontology **symbols** map
+ * from `spec/src/namespaces/*.rs`; `website/` nodes are **documentation site sources** (pages) alongside
+ * code graph entities.
  */
 
 /** Public docs site (Ontology Inventory, Reference → Namespaces, etc.). */

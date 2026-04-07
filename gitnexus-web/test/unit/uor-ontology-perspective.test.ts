@@ -106,4 +106,15 @@ describe('uor-ontology-perspective', () => {
     expect(g.getNodeAttribute('w', 'hidden')).toBe(true);
     expect(g.getEdgeAttribute(e, 'hidden')).toBe(true);
   });
+
+  it('individuals perspective matches JSON-LD-derived IRI (generated individuals, not regex-only)', () => {
+    const termsWithInd: UorOntologyTermsPayload = {
+      classIris: [],
+      propertyIris: [],
+      individualIris: [`${UOR_ONTOLOGY_IRI_PREFIX}schema/pi1`],
+      namespaceModuleKeys: ['schema'],
+    };
+    const pi1 = baseNode('n', { label: 'pi1', filePath: 'spec/src/namespaces/schema.rs' });
+    expect(nodeVisibleForUorPerspective(pi1, 'individuals', null, termsWithInd)).toBe(true);
+  });
 });

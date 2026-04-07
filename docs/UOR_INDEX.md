@@ -32,6 +32,16 @@ That keeps the GitHub Pages graph closer to [uor-foundation.github.io/UOR-Framew
 
 The export script [`scripts/export-hosted-uor-graph.mjs`](../scripts/export-hosted-uor-graph.mjs) applies a second **path-prefix filter** (`spec/`, `public/`, `website/`) so the shipped `uor-hosted/*.json` cannot drift if ignore rules change. The manifest may include `hostedScope` (e.g. `spec,public,website`) for debugging.
 
+### Canonical ontology IRIs (`ontology-terms.json`)
+
+Upstream keeps `public/` **gitignored**; artifacts are produced by **`cargo run --bin uor-build`** ([`clients/src/bin/build.rs`](../third_party/UOR-Framework/clients/src/bin/build.rs)), which serializes [`Ontology::full()`](../third_party/UOR-Framework/spec/src/lib.rs) to `public/uor.foundation.jsonld`. The export script runs this (or uses an existing jsonld if you set **`UOR_SKIP_ONTOLOGY_BUILD=1`**), then parses `@graph` in [`scripts/uor-jsonld-ontology-terms.mjs`](../scripts/uor-jsonld-ontology-terms.mjs) and **asserts** class / property / individual counts against `counts.rs` (`PROPERTIES` includes the global `https://uor.foundation/space` annotation property; the manifest HUD still uses **895** `NAMESPACE_PROPERTIES` to match the [foundation homepage](https://uor-foundation.github.io/UOR-Framework/) line). Use **`npm run uor:build-ontology`** to run only `uor-build`.
+
+**Tests:** `npm run test:uor-scripts` (Node’s test runner over the JSON-LD helpers).
+
+### Future: OWL structure subgraph (optional)
+
+Perspective filters and foundation deep links use **IRI lists + the GitNexus code graph**. They do not add standalone Sigma nodes for every OWL axiom (`rdfs:subClassOf`, domain/range, etc.). A future mode could merge **ontology-only** nodes/edges from JSON-LD into the hosted viewer or provide a toggle — see the co-replication plan — without replacing the code graph.
+
 **Developing GitNexus in this repo:** After `cd gitnexus && npm install && npm run build`, use `npm run uor:analyze:local` at the repo root to run the **in-tree** CLI (`node gitnexus/dist/cli/index.js …`)—same binary CI uses in `.github/workflows/uor-index.yml`. That avoids `npx` fetching a different npm version than your workspace.
 
 **After changing the ignore file:** run `npm run uor:prepare` and **re-analyze** so `.gitnexus` is rebuilt; old index data will not reflect the new scope until you do.
@@ -68,7 +78,7 @@ The workflow [`.github/workflows/deploy-pages.yml`](../.github/workflows/deploy-
 
 On the live site, the app loads a **pre-built** `{ nodes, relationships }` snapshot from `uor-hosted/manifest.json` and `uor-hosted/chunks/*.json` (same shapes as a successful `connectToServer` graph). You get read-only exploration: pan/zoom, selection, file tree, in-memory process flows, and header search over node names. **No** `gitnexus serve`, upload, or CLI is required for visitors.
 
-The manifest includes `resolved_sha` (from the lock file) so the UI can show which UOR commit the graph represents. It may also include `ontologyInventory` (from `spec/src/counts.rs`) and the UI loads `ontology-terms.json` (IRIs extracted at export) to drive the **Ontology Inventory** bar and perspective filters (namespaces / classes / properties / individuals), aligned with the [public UOR site](https://uor-foundation.github.io/UOR-Framework/).
+The manifest includes `resolved_sha` (from the lock file) so the UI can show which UOR commit the graph represents. It may also include `ontologyInventory` (from `spec/src/counts.rs`) and the UI loads `ontology-terms.json` (IRIs from **`uor-build` JSON-LD**, exhaustive for all named individuals) to drive the **Ontology Inventory** bar and perspective filters (namespaces / classes / properties / individuals), aligned with the [public UOR site](https://uor-foundation.github.io/UOR-Framework/).
 
 - Add `?hosted=0` to the URL to skip the static snapshot and use the normal onboarding / `?server=` bridge flow (for debugging).
 
@@ -77,7 +87,7 @@ The manifest includes `resolved_sha` (from the lock file) so the UI can show whi
 - Live Cypher, repo listing, re-analyze, server embeddings, and AI chat tools that call HTTP APIs.
 - Workflows that exceed what fits in a single static export (very large graphs may need chunking or follow-up lazy loading).
 
-**Local preview of hosted assets:** from the repo root after `cd gitnexus && npm run build`, run `npm run uor:prepare`, `npm run uor:analyze:local`, then `npm run uor:export-hosted`; `cd gitnexus-web && npm run build && npm run preview` and open the preview URL (with the same `base` as production, graph loads from `public/uor-hosted/`).
+**Local preview of hosted assets:** from the repo root after `cd gitnexus && npm run build`, run `npm run uor:prepare`, `npm run uor:analyze:local`, then `npm run uor:export-hosted` (this runs **`uor-build`** via Rust/`cargo` unless `UOR_SKIP_ONTOLOGY_BUILD=1` and `public/uor.foundation.jsonld` already exists); `cd gitnexus-web && npm run build && npm run preview` and open the preview URL (with the same `base` as production, graph loads from `public/uor-hosted/`).
 
 ### Refresh policy
 
