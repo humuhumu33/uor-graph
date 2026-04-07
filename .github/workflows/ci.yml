@@ -12,9 +12,12 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
+# Cancel superseded PR runs only. On push to main, do not cancel in-flight runs —
+# otherwise a rapid sequence of pushes leaves older runs with tests=cancelled and
+# CI Gate fails even though no test actually failed.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # ── Reusable workflow orchestration ─────────────────────────────────
 # Each concern lives in its own workflow file for maintainability:

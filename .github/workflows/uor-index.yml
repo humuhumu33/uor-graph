@@ -30,9 +30,10 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
+# Same as CI: avoid cancelling in-progress main-branch runs on rapid pushes.
 concurrency:
-  group: uor-index-${{ github.ref }}
-  cancel-in-progress: true
+  group: uor-index-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify-and-analyze:
