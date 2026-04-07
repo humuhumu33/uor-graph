@@ -19,9 +19,7 @@ if (!existsSync(join(uor, 'Cargo.toml'))) {
 }
 
 const testMode = process.env.UOR_VERIFY_CARGO_TEST === '1';
-const cargoArgs = testMode
-  ? ['test', '--workspace', '--no-run']
-  : ['check', '--workspace'];
+const cargoArgs = testMode ? ['test', '--workspace', '--no-run'] : ['check', '--workspace'];
 
 const label = testMode ? 'cargo test --workspace --no-run' : 'cargo check --workspace';
 console.error(`[uor-cargo-verify] ${label} in third_party/UOR-Framework …`);
