@@ -257,7 +257,7 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle>((_, ref) => {
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.03) 0%, transparent 70%),
+              radial-gradient(circle at 50% 50%, rgba(109, 139, 168, 0.04) 0%, transparent 70%),
               linear-gradient(to bottom, #06060a, #0a0a10)
             `,
           }}

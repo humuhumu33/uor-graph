@@ -226,7 +226,7 @@ export const RightPanel = () => {
             }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Nexus AI</span>
+            <span>Assistant</span>
           </button>
 
           {/* Processes Tab */}
@@ -240,8 +240,8 @@ export const RightPanel = () => {
           >
             <GitBranch className="h-3.5 w-3.5" />
             <span>Processes</span>
-            <span className="rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-              NEW
+            <span className="rounded-full border border-accent/35 bg-accent/12 px-2 py-0.5 text-xs font-medium text-accent">
+              New
             </span>
           </button>
         </div>
@@ -270,12 +270,12 @@ export const RightPanel = () => {
           <div className="flex items-center gap-2.5 border-b border-border-subtle bg-elevated/50 px-4 py-3">
             <div className="ml-auto flex items-center gap-2">
               {!isAgentReady && (
-                <span className="rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-1 text-[11px] text-amber-300">
+                <span className="rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-1 text-sm text-amber-200">
                   Configure AI
                 </span>
               )}
               {isAgentInitializing && (
-                <span className="flex items-center gap-1 rounded-full border border-border-subtle bg-surface px-2 py-1 text-[11px] text-text-muted">
+                <span className="flex items-center gap-1 rounded-full border border-border-subtle bg-surface px-2 py-1 text-sm text-text-muted">
                   <Loader2 className="h-3 w-3 animate-spin" /> Connecting
                 </span>
               )}
@@ -294,7 +294,7 @@ export const RightPanel = () => {
           <div className="scrollbar-thin flex-1 overflow-y-auto p-4">
             {chatMessages.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center px-4 text-center">
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-node-interface text-2xl shadow-glow">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-border-subtle bg-elevated text-2xl">
                   🧠
                 </div>
                 <h3 className="mb-2 text-base font-medium">Ask me anything</h3>
@@ -323,9 +323,7 @@ export const RightPanel = () => {
                       <div className="mb-4">
                         <div className="mb-2 flex items-center gap-2">
                           <User className="h-4 w-4 text-text-muted" />
-                          <span className="text-xs font-medium tracking-wide text-text-muted uppercase">
-                            You
-                          </span>
+                          <span className="text-sm font-medium text-text-secondary">You</span>
                         </div>
                         <div className="pl-6 text-sm text-text-primary">{message.content}</div>
                       </div>
@@ -336,9 +334,7 @@ export const RightPanel = () => {
                       <div>
                         <div className="mb-3 flex items-center gap-2">
                           <Sparkles className="h-4 w-4 text-accent" />
-                          <span className="text-xs font-medium tracking-wide text-text-muted uppercase">
-                            Nexus AI
-                          </span>
+                          <span className="text-sm font-medium text-text-secondary">Assistant</span>
                           {isChatLoading && message === chatMessages[chatMessages.length - 1] && (
                             <Loader2 className="h-3 w-3 animate-spin text-accent" />
                           )}

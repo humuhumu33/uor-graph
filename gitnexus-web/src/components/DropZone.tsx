@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Check, Sparkles } from '@/lib/lucide-icons';
+import { Loader2, Check } from '@/lib/lucide-icons';
 import {
   connectToServer,
   fetchRepos,
@@ -66,12 +66,11 @@ function SuccessCard() {
       role="status"
       aria-live="polite"
     >
-      {/* Success glow */}
-      <div className="pointer-events-none absolute -top-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-emerald-500/8 blur-3xl" />
+      <div className="pointer-events-none absolute -top-16 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-emerald-500/5 blur-3xl" />
 
       <div className="relative">
         {/* Animated check icon */}
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 shadow-[0_0_30px_rgba(16,185,129,0.15)]">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/25 bg-emerald-500/10">
           <Check className="h-8 w-8 text-emerald-400" />
         </div>
 
@@ -79,7 +78,7 @@ function SuccessCard() {
           Server Connected
         </h2>
         <p className="text-center text-sm leading-relaxed text-text-secondary">
-          Preparing your code knowledge graph...
+          Building the graph…
         </p>
 
         {/* Subtle progress hint */}
@@ -111,7 +110,7 @@ function LoadingCard({ message }: { message: string }) {
 
       <div className="relative">
         {/* Spinner */}
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/20 to-accent-dim/10 shadow-glow-soft">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/25 bg-accent/10">
           <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
 
@@ -121,11 +120,6 @@ function LoadingCard({ message }: { message: string }) {
         <p className="text-center text-sm leading-relaxed text-text-secondary">
           This may take a moment for large repositories
         </p>
-
-        {/* Decorative sparkle */}
-        <div className="mt-5 flex items-center justify-center">
-          <Sparkles className="h-4 w-4 text-accent/30" />
-        </div>
       </div>
     </div>
   );

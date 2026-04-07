@@ -70,7 +70,7 @@ function TerminalWindow({
           <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/60" />
           <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/60" />
         </div>
-        <span className="flex-1 text-center font-mono text-[11px] text-text-muted">{label}</span>
+        <span className="flex-1 text-center font-mono text-sm text-text-muted">{label}</span>
         <CopyButton text={command} />
       </div>
       {/* Command body */}
@@ -103,14 +103,14 @@ function StepDot({ state, number }: { state: StepState; number: number }) {
       <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
         <div className="absolute inset-0 animate-ping rounded-full border border-accent/30" />
         <div className="flex h-6 w-6 items-center justify-center rounded-full border border-accent/60 bg-accent/20">
-          <span className="text-[10px] leading-none font-semibold text-accent">{number}</span>
+          <span className="text-xs leading-none font-semibold text-accent">{number}</span>
         </div>
       </div>
     );
   }
   return (
     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-elevated">
-      <span className="text-[10px] leading-none font-semibold text-text-muted">{number}</span>
+      <span className="text-xs leading-none font-semibold text-text-muted">{number}</span>
     </div>
   );
 }
@@ -150,7 +150,7 @@ function StepRow({
               {title}
             </span>
             {state === 'done' && (
-              <span className="animate-fade-in font-mono text-[10px] tracking-wider text-emerald-400/60 uppercase">
+              <span className="animate-fade-in font-mono text-xs tracking-wider text-emerald-400/60 uppercase">
                 done
               </span>
             )}
@@ -188,7 +188,7 @@ function PollingBar() {
             <span className="animate-pulse">...</span>
           </span>
         </p>
-        <p className="mt-0.5 text-[11px] text-text-muted">Will auto-connect when detected</p>
+        <p className="mt-0.5 text-sm text-text-muted">Will auto-connect when detected</p>
       </div>
     </div>
   );
@@ -221,7 +221,7 @@ export const OnboardingGuide = ({ isPolling }: OnboardingGuideProps) => {
         <div className="text-center">
           <div className="mb-2 inline-flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-accent/70" />
-            <span className="text-[11px] font-medium tracking-widest text-accent/80 uppercase">
+            <span className="text-sm font-medium tracking-widest text-accent/80 uppercase">
               GitNexus
             </span>
           </div>
@@ -258,7 +258,7 @@ export const OnboardingGuide = ({ isPolling }: OnboardingGuideProps) => {
             <>
               <div className="my-3 flex items-center gap-3">
                 <div className="h-px flex-1 bg-border-subtle" />
-                <span className="text-[11px] tracking-widest text-text-muted uppercase">
+                <span className="text-sm tracking-widest text-text-muted uppercase">
                   or install globally
                 </span>
                 <div className="h-px flex-1 bg-border-subtle" />

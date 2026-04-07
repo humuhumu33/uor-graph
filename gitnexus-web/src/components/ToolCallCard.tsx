@@ -147,7 +147,7 @@ export const ToolCallCard = ({ toolCall, defaultExpanded = false }: ToolCallCard
           {/* Arguments/Query */}
           {formattedArgs && (
             <div className="border-b border-border-subtle/50 px-3 py-2">
-              <div className="mb-1.5 text-[10px] tracking-wider text-text-muted uppercase">
+              <div className="mb-1.5 text-xs tracking-wider text-text-muted uppercase">
                 {toolCall.name === 'cypher' ? 'Query' : 'Input'}
               </div>
               <pre className="overflow-x-auto rounded bg-surface/50 p-2 font-mono text-xs whitespace-pre-wrap text-text-secondary">
@@ -159,9 +159,7 @@ export const ToolCallCard = ({ toolCall, defaultExpanded = false }: ToolCallCard
           {/* Result */}
           {toolCall.result && (
             <div className="px-3 py-2">
-              <div className="mb-1.5 text-[10px] tracking-wider text-text-muted uppercase">
-                Result
-              </div>
+              <div className="mb-1.5 text-xs tracking-wider text-text-muted uppercase">Result</div>
               <div className="max-h-[400px] overflow-y-auto rounded bg-surface/50">
                 <pre className="p-2 font-mono text-xs whitespace-pre-wrap text-text-secondary">
                   {toolCall.result.length > 3000

@@ -380,7 +380,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
             <div className="flex items-center gap-2 border-b border-amber-500/20 bg-gradient-to-r from-amber-500/8 to-orange-500/5 px-3 py-2">
               <div className="flex items-center gap-1.5 rounded-md border border-amber-500/25 bg-amber-500/15 px-2 py-0.5">
                 <MousePointerClick className="h-3 w-3 text-amber-400" />
-                <span className="text-[10px] font-semibold tracking-wide text-amber-300 uppercase">
+                <span className="text-xs font-semibold tracking-wide text-amber-300 uppercase">
                   Selected
                 </span>
               </div>
@@ -394,7 +394,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
                   href={uorFoundationDocUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-[10px] font-medium text-accent transition-colors hover:bg-accent/10"
+                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-xs font-medium text-accent transition-colors hover:bg-accent/10"
                   title="Open matching page on the UOR Foundation site"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -406,7 +406,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
                   href={uorReferenceDocUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-[10px] font-medium text-violet-300/90 transition-colors hover:bg-violet-500/10"
+                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-xs font-medium text-accent transition-colors hover:bg-accent/10"
                   title="Open generated reference HTML (uor_docs) for this symbol"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -418,7 +418,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
                   href={uorGithubBlobUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-[10px] font-medium text-text-secondary transition-colors hover:bg-elevated"
+                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-xs font-medium text-text-secondary transition-colors hover:bg-elevated"
                   title="Open this file at the pinned commit on GitHub"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -501,7 +501,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
             <div className="flex items-center gap-2 border-b border-cyan-500/20 bg-gradient-to-r from-cyan-500/8 to-teal-500/5 px-3 py-2">
               <div className="flex items-center gap-1.5 rounded-md border border-cyan-500/25 bg-cyan-500/15 px-2 py-0.5">
                 <Sparkles className="h-3 w-3 text-cyan-400" />
-                <span className="text-[10px] font-semibold tracking-wide text-cyan-300 uppercase">
+                <span className="text-xs font-semibold tracking-wide text-cyan-300 uppercase">
                   AI Citations
                 </span>
               </div>
@@ -537,7 +537,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
                     >
                       <div className="flex items-start gap-2 border-b border-border-subtle bg-surface/40 px-3 py-2">
                         <span
-                          className="mt-0.5 flex-shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase"
+                          className="mt-0.5 flex-shrink-0 rounded px-2 py-0.5 text-xs font-semibold tracking-wide uppercase"
                           style={{ backgroundColor: nodeColor, color: '#06060a' }}
                           title={ref.label ?? 'Code'}
                         >
@@ -547,7 +547,7 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
                           <div className="truncate text-xs font-medium text-text-primary">
                             {ref.name ?? ref.filePath.split('/').pop() ?? ref.filePath}
                           </div>
-                          <div className="truncate font-mono text-[11px] text-text-muted">
+                          <div className="truncate font-mono text-sm text-text-muted">
                             {ref.filePath}
                             {startDisplay !== undefined && (
                               <span className="text-text-secondary">

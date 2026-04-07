@@ -259,7 +259,7 @@ export const RepoAnalyzer = ({ variant, onComplete, onCancel }: RepoAnalyzerProp
               validationError && phase === 'error'
                 ? 'border-red-500/50'
                 : isValidGithubUrl(githubUrl)
-                  ? 'border-accent/50 shadow-[0_0_0_3px_rgba(124,58,237,0.08)]'
+                  ? 'border-accent/50 shadow-[0_0_0_3px_rgba(109,139,168,0.12)]'
                   : 'border-border-default focus-within:border-accent/40'
             } `}
           >
@@ -311,7 +311,7 @@ export const RepoAnalyzer = ({ variant, onComplete, onCancel }: RepoAnalyzerProp
               validationError && phase === 'error'
                 ? 'border-red-500/50'
                 : localPath.trim().length > 1
-                  ? 'border-accent/50 shadow-[0_0_0_3px_rgba(124,58,237,0.08)]'
+                  ? 'border-accent/50 shadow-[0_0_0_3px_rgba(109,139,168,0.12)]'
                   : 'border-border-default focus-within:border-accent/40'
             } `}
           >

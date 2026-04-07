@@ -17,8 +17,7 @@ interface ProcessFlowModalProps {
   isFullScreen?: boolean;
 }
 
-// Initialize mermaid with cyan/purple theme matching GitNexus
-// Initialize mermaid with cyan/purple theme matching GitNexus
+// Mermaid theme aligned with the app (cyan edges on dark nodes)
 mermaid.initialize({
   startOnLoad: false,
   suppressErrorRendering: true, // Try to suppress if supported
@@ -304,7 +303,7 @@ export const ProcessFlowModal = ({
           )}
           <button
             onClick={handleCopyMermaid}
-            className="flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-purple-500/20 transition-all hover:bg-purple-500"
+            className="flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-accent/25 transition-all hover:bg-accent-dim"
           >
             <Copy className="h-4 w-4" />
             Copy Mermaid

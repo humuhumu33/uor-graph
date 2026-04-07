@@ -133,7 +133,7 @@ export const MermaidDiagram = ({ code }: MermaidDiagramProps) => {
         <div className="relative overflow-hidden rounded-xl border border-border-subtle bg-gradient-to-b from-surface to-elevated">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border-subtle bg-surface/60 px-3 py-2">
-            <span className="text-[10px] font-medium tracking-wider text-text-muted uppercase">
+            <span className="text-xs font-medium tracking-wider text-text-muted uppercase">
               Diagram
             </span>
             <button

@@ -81,11 +81,11 @@ test.describe('Server Connection & Graph Loading', () => {
   });
 });
 
-test.describe('Nexus AI', () => {
+test.describe('Assistant', () => {
   test('panel opens and agent initializes without error', async ({ page }, testInfo) => {
     await waitForGraphLoaded(page, testInfo);
 
-    await page.getByRole('button', { name: 'Nexus AI' }).click();
+    await page.getByRole('button', { name: 'Assistant' }).click();
     await expect(page.getByText('Ask me anything')).toBeVisible({ timeout: 15_000 });
     await page.screenshot({ path: testInfo.outputPath('nexus-ai-panel.png'), fullPage: true });
 
@@ -98,7 +98,7 @@ test.describe('Processes Panel', () => {
   test('shows process list and View button works', async ({ page }, testInfo) => {
     await waitForGraphLoaded(page, testInfo);
 
-    await page.getByRole('button', { name: 'Nexus AI' }).click();
+    await page.getByRole('button', { name: 'Assistant' }).click();
     await page.getByText('Processes').click();
 
     await expect(page.locator('[data-testid="process-list-loaded"]')).toBeVisible({
@@ -123,7 +123,7 @@ test.describe('Processes Panel', () => {
   test('lightbulb highlights nodes in graph', async ({ page }, testInfo) => {
     await waitForGraphLoaded(page, testInfo);
 
-    await page.getByRole('button', { name: 'Nexus AI' }).click();
+    await page.getByRole('button', { name: 'Assistant' }).click();
     await page.getByText('Processes').click();
     await expect(page.locator('[data-testid="process-list-loaded"]')).toBeVisible({
       timeout: 15_000,

@@ -20,7 +20,7 @@ const tabs: Tab[] = [
   { id: 'overview', label: 'Overview', icon: <HelpCircle className="h-4 w-4" /> },
   { id: 'graph', label: 'Graph & nodes', icon: <GitBranch className="h-4 w-4" /> },
   { id: 'search', label: 'Search & filter', icon: <Search className="h-4 w-4" /> },
-  { id: 'ai', label: 'Nexus AI', icon: <Zap className="h-4 w-4" /> },
+  { id: 'ai', label: 'Assistant', icon: <Zap className="h-4 w-4" /> },
   { id: 'shortcuts', label: 'Shortcuts', icon: <Keyboard className="h-4 w-4" /> },
   { id: 'status', label: 'Status bar', icon: <BarChart2 className="h-4 w-4" /> },
 ];
@@ -184,8 +184,8 @@ function TabContent({
             <br />
             <strong style={{ color: '#e2e2e8', fontWeight: 500 }}>2.</strong> Search by name or type
             <br />
-            <strong style={{ color: '#e2e2e8', fontWeight: 500 }}>3.</strong> Ask Nexus AI a natural
-            language question
+            <strong style={{ color: '#e2e2e8', fontWeight: 500 }}>3.</strong> Ask the Assistant a
+            plain-language question
           </p>
         </div>
 
@@ -297,7 +297,7 @@ function TabContent({
           style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <Filter style={{ width: 14, height: 14, color: '#a78bfa', flexShrink: 0 }} />
+            <Filter style={{ width: 14, height: 14, color: '#8aa3bc', flexShrink: 0 }} />
             <p style={{ fontSize: 12, fontWeight: 500, color: '#e2e2e8', margin: 0 }}>
               Filter panel
             </p>
@@ -326,8 +326,8 @@ function TabContent({
               <code
                 style={{
                   fontSize: 11,
-                  color: '#a78bfa',
-                  background: 'rgba(167,139,250,0.1)',
+                  color: '#8aa3bc',
+                  background: 'rgba(109,139,168,0.12)',
                   borderRadius: 4,
                   padding: '1px 6px',
                   fontFamily: 'monospace',
@@ -348,30 +348,29 @@ function TabContent({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <p
           style={{
-            fontSize: 11,
-            color: '#6b7280',
+            fontSize: 13,
+            color: '#7c7c94',
             margin: '0 0 4px',
             textTransform: 'uppercase',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.06em',
           }}
         >
-          Nexus AI
+          Assistant
         </p>
 
         <div
           style={{
-            background: 'rgba(167,139,250,0.08)',
-            border: '0.5px solid rgba(167,139,250,0.25)',
+            background: 'rgba(109,139,168,0.08)',
+            border: '0.5px solid rgba(109,139,168,0.28)',
             borderRadius: 10,
             padding: '12px 14px',
           }}
         >
-          <p style={{ fontSize: 12, fontWeight: 500, color: '#a78bfa', margin: '0 0 4px' }}>
-            ✓ Semantic Ready
+          <p style={{ fontSize: 12, fontWeight: 500, color: '#8aa3bc', margin: '0 0 4px' }}>
+            ✓ Ready
           </p>
           <p style={{ fontSize: 12, color: '#9ca3af', margin: 0, lineHeight: 1.6 }}>
-            Your repo is indexed and ready for semantic queries. Nexus AI understands code structure
-            and relationships, not just file names.
+            Your repo is indexed for questions about structure and dependencies—not just file names.
           </p>
         </div>
 
@@ -400,8 +399,7 @@ function TabContent({
         <div style={{ borderTop: '0.5px solid rgba(255,255,255,0.08)', margin: '4px 0' }} />
 
         <p style={{ fontSize: 12, color: '#6b7280', margin: 0, lineHeight: 1.6 }}>
-          Open the prompt via the <span style={{ color: '#e2e2e8' }}>Nexus AI</span> button
-          (top-right).
+          Open chat with the <span style={{ color: '#e2e2e8' }}>Assistant</span> button (top-right).
         </p>
       </div>
     );

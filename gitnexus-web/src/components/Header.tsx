@@ -36,7 +36,7 @@ const NODE_TYPE_COLORS: Record<string, string> = {
   Interface: '#ec4899',
   Variable: '#64748b',
   Import: '#475569',
-  Type: '#a78bfa',
+  Type: '#8b9aad',
 };
 
 interface HeaderProps {
@@ -169,7 +169,7 @@ export const Header = ({
       <div className="flex items-center gap-4">
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-accent to-node-interface text-sm font-bold text-white shadow-glow">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md border border-border-default bg-elevated text-sm font-bold text-accent">
             ◇
           </div>
           <span className="text-[15px] font-semibold tracking-tight">GitNexus</span>
@@ -187,8 +187,8 @@ export const Header = ({
           >
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-node-interface" />
             <span className="min-w-0 truncate font-medium text-text-primary">{projectName}</span>
-            <span className="shrink-0 rounded bg-elevated px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-text-muted uppercase">
-              static
+            <span className="shrink-0 rounded border border-border-subtle bg-elevated px-2 py-0.5 text-xs font-medium text-text-secondary">
+              Snapshot
             </span>
             {hostedCommitUrl && (
               <a
@@ -243,7 +243,7 @@ export const Header = ({
                     {/* Repo list */}
                     {availableRepos.length > 0 && (
                       <div>
-                        <div className="px-3 pt-2.5 pb-1.5 text-[10px] font-medium tracking-wider text-text-muted uppercase">
+                        <div className="px-3 pt-2.5 pb-1.5 text-xs font-medium text-text-secondary">
                           Repositories
                         </div>
                         {availableRepos.map((repo) => (
@@ -267,7 +267,7 @@ export const Header = ({
                                 {repo.name}
                               </span>
                               {repo.name === projectName && (
-                                <span className="shrink-0 font-mono text-[10px] text-accent">
+                                <span className="shrink-0 font-mono text-xs text-accent">
                                   active
                                 </span>
                               )}
@@ -425,7 +425,7 @@ export const Header = ({
             onKeyDown={handleKeyDown}
             className="flex-1 border-none bg-transparent text-sm text-text-primary outline-none placeholder:text-text-muted"
           />
-          <kbd className="rounded border border-border-subtle bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
+          <kbd className="rounded border border-border-subtle bg-elevated px-2 py-0.5 font-mono text-xs text-text-secondary">
             ⌘K
           </kbd>
         </div>
@@ -474,17 +474,16 @@ export const Header = ({
           href="https://github.com/abhigyanpatwari/GitNexus"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-3.5 py-2 text-sm font-medium text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:from-purple-500 hover:to-pink-500 hover:shadow-xl"
+          className="group flex items-center gap-2 rounded-lg border border-border-default bg-elevated px-3.5 py-2 text-sm font-medium text-text-primary transition-colors hover:border-accent/40 hover:bg-hover"
         >
-          <Github className="h-4 w-4" />
-          <span className="hidden sm:inline">Star if cool</span>
-          <Star className="h-3.5 w-3.5 transition-all group-hover:fill-yellow-300 group-hover:text-yellow-300" />
-          <span className="hidden sm:inline">✨</span>
+          <Github className="h-4 w-4 text-text-secondary group-hover:text-text-primary" />
+          <span className="hidden sm:inline">Star on GitHub</span>
+          <Star className="h-3.5 w-3.5 text-text-muted transition-colors group-hover:text-accent" />
         </a>
 
         {/* Stats */}
         {graph && (
-          <div className="mr-2 flex items-center gap-4 text-xs text-text-muted">
+          <div className="mr-2 flex items-center gap-4 text-sm text-text-secondary">
             <span>{nodeCount} nodes</span>
             <span>{edgeCount} edges</span>
           </div>
@@ -497,7 +496,7 @@ export const Header = ({
         <button
           onClick={() => setSettingsPanelOpen(true)}
           className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-hover hover:text-text-primary"
-          title="AI Settings"
+          title="Assistant settings"
         >
           <Settings className="h-4.5 w-4.5" />
         </button>
@@ -512,14 +511,14 @@ export const Header = ({
         {/* AI Button */}
         <button
           onClick={openChatPanel}
-          className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-all ${
+          className={`flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors ${
             isRightPanelOpen && rightPanelTab === 'chat'
-              ? 'bg-accent text-white shadow-glow'
-              : 'bg-gradient-to-r from-accent to-accent-dim text-white shadow-glow hover:-translate-y-0.5 hover:shadow-lg'
+              ? 'border-accent bg-accent/15 text-accent'
+              : 'border-border-default bg-elevated text-text-primary hover:border-accent/35 hover:bg-hover'
           } `}
         >
-          <Sparkles className="h-4 w-4" />
-          <span>Nexus AI</span>
+          <Sparkles className="h-4 w-4 text-accent" />
+          <span>Assistant</span>
         </button>
       </div>
     </header>

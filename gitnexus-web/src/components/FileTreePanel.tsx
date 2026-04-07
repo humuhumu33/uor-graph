@@ -411,7 +411,7 @@ export const FileTreePanel = ({ onFocusNode }: FileTreePanelProps) => {
             <h3 className="mb-2 text-xs font-medium tracking-wide text-text-secondary uppercase">
               Node Types
             </h3>
-            <p className="mb-3 text-[11px] text-text-muted">
+            <p className="mb-3 text-sm text-text-muted">
               Toggle visibility of node types in the graph
             </p>
           </div>
@@ -451,9 +451,7 @@ export const FileTreePanel = ({ onFocusNode }: FileTreePanelProps) => {
             <h3 className="mb-2 text-xs font-medium tracking-wide text-text-secondary uppercase">
               Edge Types
             </h3>
-            <p className="mb-3 text-[11px] text-text-muted">
-              Toggle visibility of relationship types
-            </p>
+            <p className="mb-3 text-sm text-text-muted">Toggle visibility of relationship types</p>
 
             <div className="flex flex-col gap-1">
               {ALL_EDGE_TYPES.map((edgeType) => {
@@ -490,9 +488,7 @@ export const FileTreePanel = ({ onFocusNode }: FileTreePanelProps) => {
               <Target className="mr-1.5 inline h-3 w-3" />
               Focus Depth
             </h3>
-            <p className="mb-3 text-[11px] text-text-muted">
-              Show nodes within N hops of selection
-            </p>
+            <p className="mb-3 text-sm text-text-muted">Show nodes within N hops of selection</p>
 
             <div className="flex flex-wrap gap-1.5">
               {[
@@ -517,7 +513,7 @@ export const FileTreePanel = ({ onFocusNode }: FileTreePanelProps) => {
             </div>
 
             {depthFilter !== null && !selectedNode && (
-              <p className="mt-2 text-[10px] text-amber-400">Select a node to apply depth filter</p>
+              <p className="mt-2 text-xs text-amber-400">Select a node to apply depth filter</p>
             )}
           </div>
 
@@ -546,7 +542,7 @@ export const FileTreePanel = ({ onFocusNode }: FileTreePanelProps) => {
                     className="h-2.5 w-2.5 rounded-full"
                     style={{ backgroundColor: NODE_COLORS[label] }}
                   />
-                  <span className="text-[10px] text-text-muted">{label}</span>
+                  <span className="text-xs text-text-muted">{label}</span>
                 </div>
               ))}
             </div>
@@ -557,7 +553,7 @@ export const FileTreePanel = ({ onFocusNode }: FileTreePanelProps) => {
       {/* Stats footer */}
       {graph && (
         <div className="border-t border-border-subtle bg-elevated/50 px-3 py-2">
-          <div className="flex items-center justify-between text-[10px] text-text-muted">
+          <div className="flex items-center justify-between text-xs text-text-muted">
             <span>{graph.nodes.length} nodes</span>
             <span>{graph.relationships.length} edges</span>
           </div>

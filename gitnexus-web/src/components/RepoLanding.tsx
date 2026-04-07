@@ -63,17 +63,17 @@ function RepoCard({ repo, onClick }: { repo: BackendRepo; onClick: () => void })
       {stats && (stats.files || stats.nodes) && (
         <div className="mt-3 flex flex-wrap gap-2 pl-6">
           {stats.files != null && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-void px-2 py-0.5 text-[11px] text-text-muted">
+            <span className="inline-flex items-center gap-1 rounded-md bg-void px-2 py-0.5 text-sm text-text-muted">
               <FileCode className="h-3 w-3" /> {stats.files.toLocaleString()} files
             </span>
           )}
           {stats.nodes != null && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-void px-2 py-0.5 text-[11px] text-text-muted">
+            <span className="inline-flex items-center gap-1 rounded-md bg-void px-2 py-0.5 text-sm text-text-muted">
               <Layers className="h-3 w-3" /> {stats.nodes.toLocaleString()} symbols
             </span>
           )}
           {stats.processes != null && stats.processes > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-void px-2 py-0.5 text-[11px] text-text-muted">
+            <span className="inline-flex items-center gap-1 rounded-md bg-void px-2 py-0.5 text-sm text-text-muted">
               <Sparkles className="h-3 w-3" /> {stats.processes} flows
             </span>
           )}
@@ -103,7 +103,7 @@ export const RepoLanding = ({ repos, onSelectRepo, onAnalyzeComplete }: RepoLand
         <div className="text-center">
           <div className="mb-2 inline-flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-accent/70" />
-            <span className="text-[11px] font-medium tracking-widest text-accent/80 uppercase">
+            <span className="text-sm font-medium tracking-widest text-accent/80 uppercase">
               GitNexus
             </span>
           </div>
@@ -127,9 +127,7 @@ export const RepoLanding = ({ repos, onSelectRepo, onAnalyzeComplete }: RepoLand
       {/* Divider */}
       <div className="mb-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-border-subtle" />
-        <span className="text-[11px] tracking-widest text-text-muted uppercase">
-          or analyze new
-        </span>
+        <span className="text-sm tracking-widest text-text-muted uppercase">or analyze new</span>
         <div className="h-px flex-1 bg-border-subtle" />
       </div>
 
@@ -139,7 +137,7 @@ export const RepoLanding = ({ repos, onSelectRepo, onAnalyzeComplete }: RepoLand
       </div>
 
       {/* Footer hint */}
-      <p className="mt-5 text-center text-[11px] leading-relaxed text-text-muted">
+      <p className="mt-5 text-center text-sm leading-relaxed text-text-muted">
         Public &amp; private repos &middot; Cloned locally by the server &middot; No data leaves
         your machine
       </p>

@@ -50,22 +50,22 @@ export const OntologyInventoryHUD = () => {
   const keys = uorOntologyTerms?.namespaceModuleKeys ?? [];
 
   return (
-    <div className="flex flex-col items-center gap-2 border-b border-border-subtle/60 bg-deep/90 px-4 py-2.5 backdrop-blur-sm">
+    <div className="flex flex-col items-center gap-3 border-b border-border-subtle/60 bg-deep/90 px-4 py-3 backdrop-blur-sm">
       <div className="text-center">
-        <h2 className="text-sm font-semibold tracking-tight text-text-primary">
-          Ontology Inventory
+        <h2 className="text-base font-semibold tracking-tight text-text-primary">
+          Ontology inventory
         </h2>
-        <p className="mt-1 text-xs text-text-muted">
+        <p className="mt-1.5 text-sm leading-relaxed text-text-secondary">
           <span>{ns} namespaces</span>
-          <span className="mx-1.5 text-border-default">·</span>
+          <span className="mx-2 text-border-default">·</span>
           <span>{cl} classes</span>
-          <span className="mx-1.5 text-border-default">·</span>
+          <span className="mx-2 text-border-default">·</span>
           <span>{pr} properties</span>
-          <span className="mx-1.5 text-border-default">·</span>
-          <span>{ind} named individuals</span>
+          <span className="mx-2 text-border-default">·</span>
+          <span>{ind} individuals</span>
         </p>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-1.5">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {UOR_ONTOLOGY_PERSPECTIVE_OPTIONS.map((p) => {
           const needsTerms = uorPerspectiveRequiresOntologyTerms(p.id);
           const disabled = needsTerms && !uorOntologyTerms;
@@ -76,16 +76,16 @@ export const OntologyInventoryHUD = () => {
               disabled={disabled}
               title={
                 disabled
-                  ? 'Load ontology-terms.json (export) to filter by extracted IRIs'
-                  : undefined
+                  ? 'Ontology term list not loaded — re-export with ontology-terms.json'
+                  : `Show ${p.label.toLowerCase()}`
               }
               onClick={() => setUorOntologyPerspective(p.id)}
-              className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
+              className={`min-h-[2.25rem] rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                 disabled
-                  ? 'cursor-not-allowed border-border-subtle/50 bg-elevated/40 text-text-muted/50'
+                  ? 'cursor-not-allowed border-border-subtle/50 bg-elevated/40 text-text-muted/60'
                   : uorOntologyPerspective === p.id
-                    ? 'border-accent/50 bg-accent/15 text-accent'
-                    : 'border-border-subtle bg-elevated/80 text-text-muted hover:border-border-default hover:text-text-secondary'
+                    ? 'border-accent/45 bg-accent/12 text-accent'
+                    : 'border-border-subtle bg-elevated/80 text-text-secondary hover:border-border-default hover:text-text-primary'
               }`}
             >
               {p.label}
@@ -94,20 +94,17 @@ export const OntologyInventoryHUD = () => {
         })}
       </div>
       {uorOntologyPerspective === 'namespaces' && keys.length > 0 && (
-        <div className="flex items-center gap-2">
-          <label
-            htmlFor="uor-ns-filter"
-            className="text-[10px] tracking-wide text-text-muted uppercase"
-          >
-            Namespace module
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <label htmlFor="uor-ns-filter" className="text-sm text-text-secondary">
+            Namespace
           </label>
           <select
             id="uor-ns-filter"
             value={uorNamespaceFilter ?? ''}
             onChange={(e) => setUorNamespaceFilter(e.target.value || null)}
-            className="max-w-[220px] rounded-md border border-border-subtle bg-surface px-2 py-1 text-xs text-text-primary"
+            className="max-w-[240px] rounded-md border border-border-subtle bg-surface px-2.5 py-1.5 text-sm text-text-primary"
           >
-            <option value="">All namespaces</option>
+            <option value="">All</option>
             {keys.map((k) => (
               <option key={k} value={k}>
                 {k}
@@ -118,18 +115,18 @@ export const OntologyInventoryHUD = () => {
             href={namespaceModuleSiteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-medium text-accent underline hover:text-accent/90"
+            className="text-sm font-medium text-accent underline-offset-2 hover:underline"
           >
             Open on site
           </a>
         </div>
       )}
-      <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[10px] text-text-muted/90">
+      <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-text-secondary">
         <a
           href={UOR_FOUNDATION_SITE_HREF}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent/90 underline hover:text-accent"
+          className="text-accent underline-offset-2 hover:underline"
         >
           Foundation site
         </a>
@@ -140,10 +137,10 @@ export const OntologyInventoryHUD = () => {
               href={hostedCommitUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-text-secondary"
-              title="GitHub commit for this graph"
+              className="underline-offset-2 hover:text-text-primary hover:underline"
+              title="This graph’s commit on GitHub"
             >
-              Commit {hostedGraphMeta.resolvedSha.slice(0, 7)}
+              {hostedGraphMeta.resolvedSha.slice(0, 7)}
             </a>
           </>
         ) : null}
@@ -154,22 +151,17 @@ export const OntologyInventoryHUD = () => {
               href={hostedTreeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-text-secondary"
-              title="Browse repository tree at this pin"
+              className="underline-offset-2 hover:text-text-primary hover:underline"
+              title="Repository tree at this revision"
             >
-              Repo tree
+              Source tree
             </a>
           </>
         )}
       </p>
-      <p className="max-w-xl text-center text-[10px] text-text-muted/90">
-        Perspectives filter the graph by matching ontology IRIs from the UOR spec to code symbols in
-        each namespace module (see Reference above). Inventory numbers match upstream{' '}
-        <code className="rounded bg-elevated px-1">spec/src/counts.rs</code>. Perspective filters
-        use IRIs from export-time extraction (classes/properties are near-complete; some generated
-        individuals may not map to visible graph symbols). Use Code Inspector links (Site, Ref,
-        Repo) on a selection to jump to the public site, generated docs HTML, or the pinned GitHub
-        file.
+      <p className="max-w-2xl text-center text-sm leading-relaxed text-text-muted">
+        Filters follow ontology terms from the export. Use the code panel to open the public site,
+        generated docs, or the file on GitHub.
       </p>
     </div>
   );
