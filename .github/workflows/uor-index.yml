@@ -11,6 +11,7 @@ on:
       - 'scripts/uor-prepare.mjs'
       - 'scripts/sync-uor-lock.mjs'
       - 'scripts/verify-uor-lock.mjs'
+      - 'scripts/uor-cargo-verify.mjs'
       - '.github/workflows/uor-index.yml'
   pull_request:
     branches: [main]
@@ -22,6 +23,7 @@ on:
       - 'scripts/uor-prepare.mjs'
       - 'scripts/sync-uor-lock.mjs'
       - 'scripts/verify-uor-lock.mjs'
+      - 'scripts/uor-cargo-verify.mjs'
       - '.github/workflows/uor-index.yml'
   workflow_dispatch:
 
@@ -44,6 +46,14 @@ jobs:
 
       - name: Verify lock matches submodule and canonical UOR remote
         run: node scripts/verify-uor-lock.mjs
+
+      - name: Install Rust (UOR workspace rust-toolchain.toml)
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Cargo check UOR workspace (compiler gate)
+        run: node scripts/uor-cargo-verify.mjs
 
       - uses: ./.github/actions/setup-gitnexus
         with:

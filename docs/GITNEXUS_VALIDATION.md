@@ -13,6 +13,7 @@ Operational checklist derived from the migration/validation plan. Use this to co
 | Node 20+ | `node -v` | LTS 20.x or 22.x acceptable. |
 | Native toolchain (CLI) | python3, make, g++ | Required for Tree-sitter during `npm install` in `gitnexus/`. |
 | UOR lock | `npm run uor:verify-lock` (repo root) | Submodule HEAD must match [`config/uor-upstream.lock.json`](../config/uor-upstream.lock.json). |
+| Rust + Tier 0 compile gate | `npm run uor:verify-cargo` (repo root) | `cargo check --workspace` on `third_party/UOR-Framework`; requires `cargo`. See [`docs/UOR_INDEX.md`](UOR_INDEX.md). |
 | Submodule | `git submodule update --init --recursive` | |
 | MCP config | `npx gitnexus setup` or README | [Root README](../README.md) Cursor / Claude blocks. |
 
@@ -87,9 +88,10 @@ Per [TESTING.md](../TESTING.md):
 ## UOR-specific quick path
 
 1. `npm run uor:verify-lock`
-2. `npm run uor:prepare`
-3. `npm run uor:analyze` (or CI)
-4. [`docs/UOR_INDEX.md`](UOR_INDEX.md) for MCP `repo` name and two-layer model.
+2. `npm run uor:verify-cargo` (optional locally; runs in CI)
+3. `npm run uor:prepare`
+4. `npm run uor:analyze` (or CI)
+5. [`docs/UOR_INDEX.md`](UOR_INDEX.md) for MCP `repo` name and two-layer model.
 
 ---
 
@@ -103,5 +105,6 @@ Per [TESTING.md](../TESTING.md):
 | `gitnexus list` | OK (empty registry until analyze succeeds) |
 | `gitnexus analyze` / `serve` | **Failed on Windows** with `ERR_DLOPEN_FAILED` for `lbugjs.node` — environment-specific; use Linux CI/WSL or fix MSVC/native addon install. |
 | `gitnexus-web` `tsc -b` + `npm test` | OK (12 files, 207 tests) |
+| Recent check (2026-04-07, Windows) | `uor:verify-lock`, `uor:prepare`, `node gitnexus/dist/cli/index.js analyze third_party/UOR-Framework`, `list`, `query -r UOR-Framework` — OK |
 
 Update this table when you re-run validation after environment changes.

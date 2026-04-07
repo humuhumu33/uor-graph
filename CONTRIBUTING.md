@@ -18,6 +18,16 @@ This project uses the [PolyForm Noncommercial License 1.0.0](https://polyformpro
 3. **Web UI (if needed):** `cd gitnexus-web && npm install`
 4. Run tests as described in [TESTING.md](TESTING.md).
 
+### UOR-Framework submodule (uor-graph fork)
+
+This monorepo pins [UOR-Foundation/UOR-Framework](https://github.com/UOR-Foundation/UOR-Framework) as a git submodule at `third_party/UOR-Framework`. After clone, run `git submodule update --init --recursive` so that path exists. If you change the submodule commit or touch UOR wiring (`.gitmodules`, lock file, `scripts/verify-uor-lock.mjs`, etc.), run `npm run uor:verify-lock` at the repo root before pushing—it must pass in CI.
+
+Full workflow, MCP `repo` naming, and the ontology vs code-graph split are documented in [docs/UOR_INDEX.md](docs/UOR_INDEX.md).
+
+**Compiler gate:** With Rust installed, `npm run uor:verify-cargo` runs `cargo check --workspace` on the UOR submodule (Tier 0 sanity check; also runs in CI).
+
+**Two separate indexes:** Analyzing `third_party/UOR-Framework` registers the **UOR** tree in your GitNexus registry. Running `gitnexus analyze` at the **monorepo root** indexes **GitNexus** itself. Both can coexist locally under different names—pass `repo` to MCP tools when more than one index is present.
+
 ## Branch and pull requests
 
 - Use short-lived branches off the default branch of the repo you are targeting.

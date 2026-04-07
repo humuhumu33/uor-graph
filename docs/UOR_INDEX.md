@@ -24,7 +24,23 @@ npm run uor:prepare    # copies config/uor.gitnexusignore → submodule (upstrea
 npm run uor:analyze    # npx gitnexus analyze third_party/UOR-Framework
 ```
 
-Index output: `third_party/UOR-Framework/.gitnexus/` (local; gitignored). Embeddings: GitNexus defaults to **off** for `analyze`; use `npx gitnexus analyze third_party/UOR-Framework --embeddings` if you want vectors. If you once used embeddings, avoid later runs without `--embeddings` if you need to keep them (see root `AGENTS.md`).
+**Developing GitNexus in this repo:** After `cd gitnexus && npm install && npm run build`, use `npm run uor:analyze:local` at the repo root to run the **in-tree** CLI (`node gitnexus/dist/cli/index.js …`)—same binary CI uses in `.github/workflows/uor-index.yml`. That avoids `npx` fetching a different npm version than your workspace.
+
+Index output: `third_party/UOR-Framework/.gitnexus/` (local; gitignored). Embeddings: GitNexus defaults to **off** for `analyze`; use `npx gitnexus analyze third_party/UOR-Framework --embeddings` or add `--embeddings` to the `uor:analyze:local` command line if you want vectors. If you once used embeddings, avoid later runs without `--embeddings` if you need to keep them (see root `AGENTS.md`).
+
+## Compiler gate (Tier 0)
+
+GitNexus produces a **structural** code graph; the Rust toolchain is the independent check that the **pinned UOR workspace compiles**.
+
+```bash
+npm run uor:verify-cargo
+```
+
+Runs `cargo check --workspace` in `third_party/UOR-Framework`. Requires [Rust](https://rustup.rs/) (`cargo` on `PATH`). This does **not** feed results into GitNexus—it is an **out-of-band** sanity gate before trusting MCP/graph answers for high-stakes work.
+
+Optional (slower, compiles tests without running them): `UOR_VERIFY_CARGO_TEST=1 npm run uor:verify-cargo`.
+
+CI runs the same check in [`.github/workflows/uor-index.yml`](../.github/workflows/uor-index.yml) after `uor:verify-lock`.
 
 ## MCP
 
@@ -50,7 +66,7 @@ For MCP: prefer `query` / `impact` / process resources for **relationship contex
 
 ## CI
 
-`.github/workflows/uor-index.yml` runs `verify-uor-lock`, `uor:prepare`, and `gitnexus analyze` when submodule, lock, or UOR scripts change.
+`.github/workflows/uor-index.yml` runs `verify-uor-lock`, **`uor:verify-cargo` (Rust `cargo check`)**, `uor:prepare`, and `gitnexus analyze` when submodule, lock, or UOR scripts change.
 
 ## Optional automation
 
