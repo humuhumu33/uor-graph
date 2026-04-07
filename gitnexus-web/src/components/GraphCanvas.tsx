@@ -18,6 +18,7 @@ import {
   SigmaNodeAttributes,
   SigmaEdgeAttributes,
 } from '../lib/graph-adapter';
+import { applyUorOntologyPerspectiveToSigma } from '../lib/uor-ontology-perspective';
 import type { GraphNode } from 'gitnexus-shared';
 import { QueryFAB } from './QueryFAB';
 import Graph from 'graphology';
@@ -33,6 +34,10 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle>((_, ref) => {
     selectedNode: appSelectedNode,
     visibleLabels,
     visibleEdgeTypes,
+    hostedGraphMode,
+    uorOntologyTerms,
+    uorOntologyPerspective,
+    uorNamespaceFilter,
     openCodePanel,
     depthFilter,
     highlightedNodeIds,
@@ -201,9 +206,25 @@ export const GraphCanvas = forwardRef<GraphCanvasHandle>((_, ref) => {
     if (sigmaGraph.order === 0) return; // Don't filter empty graph
 
     filterGraphByDepth(sigmaGraph, appSelectedNode?.id || null, depthFilter, visibleLabels);
+    if (hostedGraphMode) {
+      applyUorOntologyPerspectiveToSigma(
+        sigmaGraph,
+        uorOntologyPerspective,
+        uorNamespaceFilter,
+        uorOntologyTerms,
+      );
+    }
     sigma.refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sigmaRef identity never changes
-  }, [visibleLabels, depthFilter, appSelectedNode]);
+  }, [
+    visibleLabels,
+    depthFilter,
+    appSelectedNode,
+    hostedGraphMode,
+    uorOntologyTerms,
+    uorOntologyPerspective,
+    uorNamespaceFilter,
+  ]);
 
   // Sync app selected node with sigma
   useEffect(() => {

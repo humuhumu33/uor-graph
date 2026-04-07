@@ -20,6 +20,7 @@ export {
   ChevronUp,
   Code,
   Copy,
+  ExternalLink,
   Eye,
   EyeOff,
   FileArchive,

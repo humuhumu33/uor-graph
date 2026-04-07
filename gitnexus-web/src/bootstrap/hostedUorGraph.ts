@@ -1,8 +1,10 @@
 /**
  * Load pre-exported GitNexus graph from static assets (GitHub Pages hosted mode).
  * Manifest: `${BASE_URL}uor-hosted/manifest.json`
+ * Optional `ontology-terms.json` supplies IRIs for class/property/individual perspectives (see `uor-ontology-types`).
  */
 import type { GraphNode, GraphRelationship } from 'gitnexus-shared';
+import type { UorOntologyInventory, UorOntologyTermsPayload } from '../lib/uor-ontology-types';
 
 export type HostedManifest = {
   version: number;
@@ -13,12 +15,17 @@ export type HostedManifest = {
   nodeCount: number;
   edgeCount: number;
   chunks: { id: string; path: string }[];
+  /** When set, graph was post-filtered to these repo-relative trees (e.g. `spec,public,website`). */
+  hostedScope?: string;
+  /** Authoritative ontology inventory from upstream `spec/src/counts.rs` at export time. */
+  ontologyInventory?: UorOntologyInventory;
 };
 
 export type HostedGraphPayload = {
   manifest: HostedManifest;
   nodes: GraphNode[];
   relationships: GraphRelationship[];
+  ontologyTerms: UorOntologyTermsPayload | null;
 };
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -46,6 +53,17 @@ export async function tryLoadHostedUorGraph(): Promise<HostedGraphPayload | null
 
   if (!manifest.chunks?.length || !manifest.resolvedSha) return null;
 
+  const termsUrl = new URL('uor-hosted/ontology-terms.json', window.location.origin + base).href;
+  let ontologyTerms: UorOntologyTermsPayload | null = null;
+  try {
+    const tr = await fetch(termsUrl, { method: 'GET' });
+    if (tr.ok) {
+      ontologyTerms = (await tr.json()) as UorOntologyTermsPayload;
+    }
+  } catch {
+    ontologyTerms = null;
+  }
+
   const nodes: GraphNode[] = [];
   const relationships: GraphRelationship[] = [];
 
@@ -59,5 +77,5 @@ export async function tryLoadHostedUorGraph(): Promise<HostedGraphPayload | null
     relationships.push(...part.relationships);
   }
 
-  return { manifest, nodes, relationships };
+  return { manifest, nodes, relationships, ontologyTerms };
 }

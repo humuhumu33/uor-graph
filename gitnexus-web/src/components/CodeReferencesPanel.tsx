@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Code,
+  ExternalLink,
   PanelLeftClose,
   PanelLeft,
   Trash2,
@@ -17,6 +18,7 @@ import { useAppState } from '../hooks/useAppState';
 import { type GraphNode, getSyntaxLanguageFromFilename } from 'gitnexus-shared';
 import { NODE_COLORS } from '../lib/constants';
 import { readFile, type ReadFileResult } from '../services/backend-client';
+import { uorHostedCodeInspectorUrls } from '../lib/uor-foundation-links';
 
 const getSyntaxLanguage = (filePath: string | undefined): string => {
   if (!filePath) return 'text';
@@ -55,7 +57,25 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
     setSelectedNode,
     codeReferenceFocus,
     projectName,
+    hostedGraphMode,
+    uorOntologyTerms,
+    hostedGraphMeta,
   } = useAppState();
+
+  const {
+    site: uorFoundationDocUrl,
+    referenceDoc: uorReferenceDocUrl,
+    githubBlob: uorGithubBlobUrl,
+  } = useMemo(
+    () =>
+      uorHostedCodeInspectorUrls(
+        hostedGraphMode,
+        selectedNode,
+        uorOntologyTerms,
+        hostedGraphMeta ?? undefined,
+      ),
+    [hostedGraphMode, selectedNode, uorOntologyTerms, hostedGraphMeta],
+  );
 
   const nodeById = useMemo(() => {
     if (!graph) return new Map<string, GraphNode>();
@@ -369,6 +389,42 @@ export const CodeReferencesPanel = ({ onFocusNode }: CodeReferencesPanelProps) =
                 {selectedNode?.properties?.filePath?.split('/').pop() ??
                   selectedNode?.properties?.name}
               </span>
+              {uorFoundationDocUrl && (
+                <a
+                  href={uorFoundationDocUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-[10px] font-medium text-accent transition-colors hover:bg-accent/10"
+                  title="Open matching page on the UOR Foundation site"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Site
+                </a>
+              )}
+              {uorReferenceDocUrl && (
+                <a
+                  href={uorReferenceDocUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-[10px] font-medium text-violet-300/90 transition-colors hover:bg-violet-500/10"
+                  title="Open generated reference HTML (uor_docs) for this symbol"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Ref
+                </a>
+              )}
+              {uorGithubBlobUrl && (
+                <a
+                  href={uorGithubBlobUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex shrink-0 items-center gap-1 rounded px-1.5 py-1 text-[10px] font-medium text-text-secondary transition-colors hover:bg-elevated"
+                  title="Open this file at the pinned commit on GitHub"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Repo
+                </a>
+              )}
               <button
                 onClick={() => setSelectedNode(null)}
                 className="rounded p-1 text-text-muted transition-colors hover:bg-amber-500/10 hover:text-amber-400"

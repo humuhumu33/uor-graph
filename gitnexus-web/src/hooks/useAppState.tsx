@@ -9,6 +9,11 @@ import {
   ReactNode,
 } from 'react';
 import type { GraphNode, NodeLabel, PipelineProgress } from 'gitnexus-shared';
+import type {
+  UorOntologyInventory,
+  UorOntologyPerspective,
+  UorOntologyTermsPayload,
+} from '../lib/uor-ontology-types';
 import type { KnowledgeGraph } from '../core/graph/types';
 import { createKnowledgeGraph } from '../core/graph/graph';
 import type {
@@ -122,6 +127,14 @@ interface AppState {
   // Query state
   highlightedNodeIds: Set<string>;
   setHighlightedNodeIds: (ids: Set<string>) => void;
+  uorOntologyTerms: UorOntologyTermsPayload | null;
+  setUorOntologyTerms: (t: UorOntologyTermsPayload | null) => void;
+  uorOntologyInventory: UorOntologyInventory | null;
+  setUorOntologyInventory: (inv: UorOntologyInventory | null) => void;
+  uorOntologyPerspective: UorOntologyPerspective;
+  setUorOntologyPerspective: (p: UorOntologyPerspective) => void;
+  uorNamespaceFilter: string | null;
+  setUorNamespaceFilter: (k: string | null) => void;
   // AI highlights (toggable)
   aiCitationHighlightedNodeIds: Set<string>;
   aiToolHighlightedNodeIds: Set<string>;
@@ -233,6 +246,14 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
     setDepthFilter,
     highlightedNodeIds,
     setHighlightedNodeIds,
+    uorOntologyTerms,
+    setUorOntologyTerms,
+    uorOntologyInventory,
+    setUorOntologyInventory,
+    uorOntologyPerspective,
+    setUorOntologyPerspective,
+    uorNamespaceFilter,
+    setUorNamespaceFilter,
   } = useGraphState();
 
   // Right Panel
@@ -1257,6 +1278,14 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
     setDepthFilter,
     highlightedNodeIds,
     setHighlightedNodeIds,
+    uorOntologyTerms,
+    setUorOntologyTerms,
+    uorOntologyInventory,
+    setUorOntologyInventory,
+    uorOntologyPerspective,
+    setUorOntologyPerspective,
+    uorNamespaceFilter,
+    setUorNamespaceFilter,
     aiCitationHighlightedNodeIds,
     aiToolHighlightedNodeIds,
     blastRadiusNodeIds,

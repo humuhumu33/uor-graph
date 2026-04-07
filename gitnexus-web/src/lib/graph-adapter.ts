@@ -28,6 +28,7 @@ export interface SigmaEdgeAttributes {
   type?: string;
   curvature?: number;
   zIndex?: number;
+  hidden?: boolean;
 }
 
 /**

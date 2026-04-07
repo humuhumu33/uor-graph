@@ -22,6 +22,7 @@ import {
 } from './services/backend-client';
 import { ERROR_RESET_DELAY_MS } from './config/ui-constants';
 import { tryLoadHostedUorGraph } from './bootstrap/hostedUorGraph';
+import { OntologyInventoryHUD } from './components/OntologyInventoryHUD';
 
 const AppContent = () => {
   const {
@@ -47,10 +48,20 @@ const AppContent = () => {
     switchRepo,
     setCurrentRepo,
     setHostedGraphSession,
+    setUorOntologyTerms,
+    setUorOntologyInventory,
+    graph,
+    setSelectedNode,
+    openCodePanel,
   } = useAppState();
 
   const graphCanvasRef = useRef<GraphCanvasHandle>(null);
+  const focusQueryHandledRef = useRef(false);
   const [serverDisconnected, setServerDisconnected] = useState(false);
+
+  useEffect(() => {
+    if (!graph) focusQueryHandledRef.current = false;
+  }, [graph]);
 
   const handleServerConnect = useCallback(
     async (result: ConnectResult): Promise<void> => {
@@ -127,9 +138,11 @@ const AppContent = () => {
           return;
         }
 
-        const { manifest, nodes, relationships } = payload;
+        const { manifest, nodes, relationships, ontologyTerms } = payload;
         setProjectName(manifest.projectName);
         setCurrentRepo(manifest.projectName);
+        setUorOntologyTerms(ontologyTerms);
+        setUorOntologyInventory(manifest.ontologyInventory ?? null);
         setHostedGraphSession({
           meta: {
             resolvedSha: manifest.resolvedSha,
@@ -158,7 +171,16 @@ const AppContent = () => {
         setViewMode('onboarding');
         setHostedGraphSession(null);
       });
-  }, [setCurrentRepo, setGraph, setHostedGraphSession, setProgress, setProjectName, setViewMode]);
+  }, [
+    setCurrentRepo,
+    setGraph,
+    setHostedGraphSession,
+    setProgress,
+    setProjectName,
+    setViewMode,
+    setUorOntologyTerms,
+    setUorOntologyInventory,
+  ]);
 
   // Auto-connect when ?server query param is present (bookmarkable shortcut).
   // Also reads ?project= to connect to a specific repo.
@@ -243,6 +265,24 @@ const AppContent = () => {
   const handleFocusNode = useCallback((nodeId: string) => {
     graphCanvasRef.current?.focusNode(nodeId);
   }, []);
+
+  // Optional shareable link: ?focus=<graph node id> (hosted or server graph)
+  useEffect(() => {
+    if (viewMode !== 'exploring' || !graph || focusQueryHandledRef.current) return;
+    const params = new URLSearchParams(window.location.search);
+    const focusId = params.get('focus');
+    if (!focusId?.trim()) return;
+    const node = graph.nodes.find((n) => n.id === focusId);
+    if (!node) return;
+    focusQueryHandledRef.current = true;
+    setSelectedNode(node);
+    openCodePanel();
+    queueMicrotask(() => graphCanvasRef.current?.focusNode(focusId));
+    params.delete('focus');
+    const url = new URL(window.location.href);
+    url.search = params.toString();
+    window.history.replaceState(null, '', url.toString());
+  }, [viewMode, graph, setSelectedNode, openCodePanel]);
 
   // Handle settings saved - refresh and reinitialize agent
   // NOTE: Must be defined BEFORE any conditional returns (React hooks rule)
@@ -331,6 +371,8 @@ const AppContent = () => {
           }
         }}
       />
+
+      <OntologyInventoryHUD />
 
       <main className="flex min-h-0 flex-1">
         {/* Left Panel - File Tree */}

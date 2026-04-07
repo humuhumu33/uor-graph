@@ -24,6 +24,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { GraphNode } from 'gitnexus-shared';
 import { EmbeddingStatus } from './EmbeddingStatus';
 import { RepoAnalyzer } from './RepoAnalyzer';
+import { hostedGithubLinksFromMeta } from '../lib/uor-github-links';
 
 // Color mapping for node types in search results
 const NODE_TYPE_COLORS: Record<string, string> = {
@@ -80,6 +81,11 @@ export const Header = ({
 
   const nodeCount = graph?.nodes.length ?? 0;
   const edgeCount = graph?.relationships.length ?? 0;
+
+  const hostedCommitUrl = useMemo(
+    () => hostedGithubLinksFromMeta(hostedGraphMeta).commitUrl,
+    [hostedGraphMeta],
+  );
 
   // Search results - filter nodes by name
   const searchResults = useMemo(() => {
@@ -172,7 +178,7 @@ export const Header = ({
         {/* Project badge + repo dropdown (hidden for GitHub Pages static snapshot) */}
         {projectName && hostedGraphMode && (
           <div
-            className="flex max-w-[280px] cursor-default items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-1.5 text-sm text-text-secondary"
+            className="flex max-w-[320px] cursor-default items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-1.5 text-sm text-text-secondary"
             title={
               hostedGraphMeta
                 ? `Static graph · ${hostedGraphMeta.nodeCount} nodes · UOR @ ${hostedGraphMeta.resolvedSha.slice(0, 12)}`
@@ -184,6 +190,18 @@ export const Header = ({
             <span className="shrink-0 rounded bg-elevated px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-text-muted uppercase">
               static
             </span>
+            {hostedCommitUrl && (
+              <a
+                href={hostedCommitUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 rounded p-1 text-text-muted transition-colors hover:bg-hover hover:text-text-primary"
+                title="Open pinned commit on GitHub"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Github className="h-4 w-4" />
+              </a>
+            )}
           </div>
         )}
         {projectName && !hostedGraphMode && (

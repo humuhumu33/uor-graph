@@ -11,6 +11,7 @@ on:
       - '.github/actions/**'
       - 'third_party/**'
       - 'config/uor-upstream.lock.json'
+      - 'config/uor.gitnexusignore'
       - 'scripts/export-hosted-uor-graph.mjs'
       - 'scripts/uor-prepare.mjs'
       - 'scripts/verify-uor-lock.mjs'

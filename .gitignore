@@ -99,4 +99,5 @@ local_docs/
 
 # CI-generated hosted graph (optional local preview: npm run uor:export-hosted)
 gitnexus-web/public/uor-hosted/manifest.json
+gitnexus-web/public/uor-hosted/ontology-terms.json
 gitnexus-web/public/uor-hosted/chunks/

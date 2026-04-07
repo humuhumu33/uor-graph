@@ -393,6 +393,11 @@ export const useSigma = (options: UseSigmaOptions = {}): UseSigmaReturn => {
       edgeReducer: (edge, data) => {
         const res = { ...data };
 
+        if (data.hidden) {
+          res.hidden = true;
+          return res;
+        }
+
         // Check edge type visibility first
         const visibleTypes = visibleEdgeTypesRef.current;
         if (visibleTypes && data.relationType) {

@@ -1,4 +1,13 @@
 # Applied to UOR-Framework checkout before GitNexus analyze (copied by uor:prepare).
-# Keeps ontology/code focus; reduces noise. Upstream UOR-Framework repo stays unchanged.
+# Upstream UOR-Framework repo stays unchanged — this file is our product scope only.
+#
+# Goal: index ontology + published artifacts + static site sources (aligned with
+# https://uor-foundation.github.io/UOR-Framework/ and https://github.com/UOR-Foundation/UOR-Framework),
+# not the full Rust workspace (clients, codegen, conformance, generated foundation, macros, docs generator).
 
-website/
+clients/
+codegen/
+conformance/
+foundation/
+uor-foundation-macros/
+docs/

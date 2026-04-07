@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Heart } from '@/lib/lucide-icons';
 import { useAppState } from '../hooks/useAppState';
+import { hostedGithubLinksFromMeta } from '../lib/uor-github-links';
 
 export const StatusBar = () => {
   const { graph, progress, hostedGraphMode, hostedGraphMeta } = useAppState();
@@ -9,6 +10,11 @@ export const StatusBar = () => {
   const edgeCount = graph?.relationships.length ?? 0;
 
   // Detect primary language
+  const hostedCommitUrl = useMemo(
+    () => hostedGithubLinksFromMeta(hostedGraphMeta).commitUrl,
+    [hostedGraphMeta],
+  );
+
   const primaryLanguage = useMemo(() => {
     if (!graph) return null;
     const languages = graph.nodes.map((n) => n.properties.language).filter(Boolean);
@@ -46,9 +52,23 @@ export const StatusBar = () => {
               <span>Ready</span>
             </div>
             {hostedGraphMode && hostedGraphMeta && (
-              <span className="rounded border border-border-subtle bg-elevated/80 px-2 py-0.5 font-mono text-[10px] text-text-muted">
-                Hosted UOR · {hostedGraphMeta.resolvedSha.slice(0, 7)}
-              </span>
+              <>
+                {hostedCommitUrl ? (
+                  <a
+                    href={hostedCommitUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded border border-border-subtle bg-elevated/80 px-2 py-0.5 font-mono text-[10px] text-text-muted transition-colors hover:border-border-default hover:text-text-secondary"
+                    title="Open this graph pin on GitHub"
+                  >
+                    Hosted UOR · {hostedGraphMeta.resolvedSha.slice(0, 7)}
+                  </a>
+                ) : (
+                  <span className="rounded border border-border-subtle bg-elevated/80 px-2 py-0.5 font-mono text-[10px] text-text-muted">
+                    Hosted UOR · {hostedGraphMeta.resolvedSha.slice(0, 7)}
+                  </span>
+                )}
+              </>
             )}
           </div>
         )}
