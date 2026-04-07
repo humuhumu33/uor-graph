@@ -488,13 +488,16 @@ const AppStateProviderInner = ({ children }: { children: ReactNode }) => {
     repoRef.current = repoName;
   }, []);
 
-  const runQuery = useCallback(async (cypher: string): Promise<any[]> => {
-    if (hostedGraphMode) {
-      console.warn('Cypher queries are not available in hosted static graph mode.');
-      return [];
-    }
-    return backendRunQuery(cypher, repoRef.current);
-  }, [hostedGraphMode]);
+  const runQuery = useCallback(
+    async (cypher: string): Promise<any[]> => {
+      if (hostedGraphMode) {
+        console.warn('Cypher queries are not available in hosted static graph mode.');
+        return [];
+      }
+      return backendRunQuery(cypher, repoRef.current);
+    },
+    [hostedGraphMode],
+  );
 
   const isDatabaseReady = useCallback(async (): Promise<boolean> => {
     if (hostedGraphMode) return false;

@@ -158,14 +158,7 @@ const AppContent = () => {
         setViewMode('onboarding');
         setHostedGraphSession(null);
       });
-  }, [
-    setCurrentRepo,
-    setGraph,
-    setHostedGraphSession,
-    setProgress,
-    setProjectName,
-    setViewMode,
-  ]);
+  }, [setCurrentRepo, setGraph, setHostedGraphSession, setProgress, setProjectName, setViewMode]);
 
   // Auto-connect when ?server query param is present (bookmarkable shortcut).
   // Also reads ?project= to connect to a specific repo.

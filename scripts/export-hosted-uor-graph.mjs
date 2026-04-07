@@ -34,9 +34,11 @@ async function main() {
 
   // Load compiled gitnexus (same as CLI); use file URL for Windows ESM resolution
   const distRoot = path.join(root, 'gitnexus', 'dist');
-  const { withLbugDb } = await import(pathToFileURL(path.join(distRoot, 'core', 'lbug', 'lbug-adapter.js')).href);
+  const { withLbugDb } = await import(
+    pathToFileURL(path.join(distRoot, 'core', 'lbug', 'lbug-adapter.js')).href
+  );
   const { buildWebGraph } = await import(
-    pathToFileURL(path.join(distRoot, 'core', 'graph', 'build-web-graph.js')).href,
+    pathToFileURL(path.join(distRoot, 'core', 'graph', 'build-web-graph.js')).href
   );
 
   const graph = await withLbugDb(lbugPath, () => buildWebGraph(false));
