@@ -52,7 +52,7 @@ Skip with `git commit --no-verify` (use sparingly).
 - **Unit** — Pure logic, parsers, graph/query helpers; fast; no network.
 - **Integration** — Real combinations (filesystem, MCP wiring, larger pipelines) as already organized under `gitnexus/test/integration`.
 - **Eval-style / golden sets** — For agent- or classification-style behavior, keep labeled inputs and expected outputs (JSON or table-driven tests) and run them in CI when relevant.
-- **E2E (web)** — Critical user paths only; prefer `data-testid` attributes for stable selectors. Tests run against real backend (`gitnexus serve`) and Vite dev server.
+- **E2E (web)** — Critical user paths only; prefer `data-testid` attributes for stable selectors. Tests run against real backend (`gitnexus serve`) and Vite dev server. Start Vite with **`VITE_DISABLE_HOSTED_GRAPH=1`** so `public/uor-hosted/` does not hijack the app before the backend flow (CI sets this in `ci-e2e.yml`).
 
 ## Performance metrics (targets)
 

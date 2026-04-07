@@ -72,6 +72,9 @@ jobs:
       - name: Start Vite dev server
         run: npm run dev &
         working-directory: gitnexus-web
+        env:
+          # Otherwise dev server loads static UOR snapshot from public/uor-hosted/ and E2E never exercises gitnexus serve.
+          VITE_DISABLE_HOSTED_GRAPH: '1'
 
       - name: Wait for Vite dev server
         run: npx wait-on http://localhost:5173 --timeout 30000

@@ -119,6 +119,8 @@ const AppContent = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('hosted') === '0') return;
     if (params.has('server')) return;
+    // E2E runs Vite against `gitnexus serve`; skip static snapshot so tests hit the real backend.
+    if (import.meta.env.VITE_DISABLE_HOSTED_GRAPH === '1') return;
 
     hostedBootstrapRan.current = true;
 
